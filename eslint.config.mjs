@@ -1,0 +1,78 @@
+import js from '@eslint/js';
+import n from 'eslint-plugin-n';
+
+export default [
+    {
+        ignores: ['node_modules/**', 'public/js/tiptap.bundle.js'],
+    },
+    // Node.js backend
+    {
+        files: ['src/**/*.js'],
+        plugins: { n },
+        ...js.configs.recommended,
+        rules: {
+            ...js.configs.recommended.rules,
+            'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+            'no-console': 'off',
+            'no-empty': ['error', { allowEmptyCatch: true }],
+            'n/no-missing-require': 'error',
+            'n/no-extraneous-require': 'error',
+        },
+        languageOptions: {
+            ecmaVersion: 2022,
+            sourceType: 'commonjs',
+            globals: {
+                require: 'readonly',
+                module: 'readonly',
+                exports: 'readonly',
+                __dirname: 'readonly',
+                __filename: 'readonly',
+                process: 'readonly',
+                Buffer: 'readonly',
+                console: 'readonly',
+                fetch: 'readonly',
+                URLSearchParams: 'readonly',
+                setTimeout: 'readonly',
+                clearTimeout: 'readonly',
+                setInterval: 'readonly',
+                clearInterval: 'readonly',
+                setImmediate: 'readonly',
+                URL: 'readonly',
+            },
+        },
+    },
+    // Browser JS
+    {
+        files: ['public/js/**/*.js'],
+        ...js.configs.recommended,
+        rules: {
+            ...js.configs.recommended.rules,
+            'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+            'no-console': 'off',
+            'no-empty': ['error', { allowEmptyCatch: true }],
+        },
+        languageOptions: {
+            ecmaVersion: 2022,
+            sourceType: 'module',
+            globals: {
+                window: 'readonly',
+                document: 'readonly',
+                fetch: 'readonly',
+                alert: 'readonly',
+                console: 'readonly',
+                setTimeout: 'readonly',
+                clearTimeout: 'readonly',
+                setInterval: 'readonly',
+                navigator: 'readonly',
+                location: 'readonly',
+                localStorage: 'readonly',
+                sessionStorage: 'readonly',
+                URLSearchParams: 'readonly',
+                FormData: 'readonly',
+                URL: 'readonly',
+                MutationObserver: 'readonly',
+                prompt: 'readonly',
+            },
+        },
+    },
+];

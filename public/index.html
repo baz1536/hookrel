@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HookRel</title>
+  <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+  <link rel="apple-touch-icon" sizes="180x180" href="images/favicon.svg">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Modal -->
+  <div id="connectionModal" class="modal" onclick="closeModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <div id="modalIcon" class="modal-icon"></div>
+        <div class="modal-title" id="modalTitle"></div>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn-primary" onclick="closeModal()">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirmation Modal -->
+  <div id="confirmModal" class="modal">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <div id="confirmModalIcon" class="modal-icon warning"></div>
+        <div class="modal-title" id="confirmModalTitle"></div>
+      </div>
+      <div class="modal-body" id="confirmModalBody"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn-danger" id="confirmModalOk">OK</button>
+        <button type="button" class="btn-cancel" id="confirmModalCancel">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="app-layout">
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar-nav">
+      <div class="sidebar-nav-title">
+        <div class="sidebar-nav-title-name">
+          <span class="sidebar-nav-title-icon">🪝</span>
+          <span>Hook<span class="wordmark-accent">Rel</span></span>
+        </div>
+        <div class="sidebar-nav-slogan">Webhooks in. Notifications out.</div>
+      </div>
+      <div class="sidebar-nav-list">
+
+        <div class="sidebar-nav-item active" onclick="switchTab('dashboard')" data-tab="dashboard">
+          <span class="nav-icon">📊</span>
+          <span>Dashboard</span>
+        </div>
+
+        <div class="sidebar-nav-divider" data-admin-only></div>
+        <div class="sidebar-nav-section" data-admin-only>Rules</div>
+
+        <div class="sidebar-nav-item" onclick="switchTab('rules')" data-tab="rules" data-admin-only>
+          <span class="nav-icon">🔀</span>
+          <span>Rules</span>
+        </div>
+
+        <div class="sidebar-nav-divider" data-admin-only></div>
+        <div class="sidebar-nav-section" data-admin-only>Configuration</div>
+
+        <div class="sidebar-nav-item" onclick="switchTab('sources')" data-tab="sources" data-admin-only>
+          <span class="nav-icon">📡</span>
+          <span>Sources</span>
+        </div>
+        <div class="sidebar-nav-item" onclick="switchTab('providers')" data-tab="providers" data-admin-only>
+          <span class="nav-icon">🔔</span>
+          <span>Providers</span>
+        </div>
+        <div class="sidebar-nav-item" onclick="switchTab('templates')" data-tab="templates" data-admin-only>
+          <span class="nav-icon">📝</span>
+          <span>Message Templates</span>
+        </div>
+
+        <div class="sidebar-nav-divider"></div>
+        <div class="sidebar-nav-section">System</div>
+
+        <div class="sidebar-nav-item" onclick="switchTab('logs')" data-tab="logs" data-admin-only>
+          <span class="nav-icon">📋</span>
+          <span>Logs</span>
+        </div>
+        <div class="sidebar-nav-item" onclick="switchTab('settings')" data-tab="settings" data-admin-only>
+          <span class="nav-icon">⚙️</span>
+          <span>Settings</span>
+        </div>
+        <div class="sidebar-nav-item" onclick="switchTab('about')" data-tab="about">
+          <span class="nav-icon">ℹ️</span>
+          <span>About</span>
+        </div>
+
+        <div class="sidebar-nav-divider"></div>
+        <div class="sidebar-nav-item logout-item" onclick="logout()" data-auth-only>
+          <span class="nav-icon">🚪</span>
+          <span>Logout</span>
+        </div>
+
+      </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <div id="dashboard-tab" class="tab-content active">
+        <p class="loading">Loading...</p>
+      </div>
+      <div id="sources-tab" class="tab-content">
+        <p class="loading">Loading...</p>
+      </div>
+      <div id="providers-tab" class="tab-content">
+        <p class="loading">Loading...</p>
+      </div>
+      <div id="templates-tab" class="tab-content">
+        <p class="loading">Loading...</p>
+      </div>
+      <div id="rules-tab" class="tab-content">
+        <p class="loading">Loading...</p>
+      </div>
+      <div id="logs-tab" class="tab-content">
+        <p class="loading">Loading...</p>
+      </div>
+      <div id="settings-tab" class="tab-content">
+        <p class="loading">Loading...</p>
+      </div>
+      <div id="about-tab" class="tab-content">
+        <p class="loading">Loading...</p>
+      </div>
+    </main>
+  </div>
+
+  <!-- Mobile overlay -->
+  <div class="mobile-overlay">
+    <div class="mobile-overlay-content">
+      <div class="mobile-overlay-icon">🪝</div>
+      <h2>Hook<span class="wordmark-accent">Rel</span></h2>
+      <p>This app is designed for desktop use.<br>Please open it on a larger screen.</p>
+    </div>
+  </div>
+
+  <!-- Help drawer -->
+  <div id="helpDrawer" class="help-drawer">
+    <div class="help-drawer-header">
+      <div class="help-drawer-title" id="helpDrawerTitle">Help</div>
+      <button type="button" class="help-drawer-close" onclick="closeHelp()" title="Close">✕</button>
+    </div>
+    <div class="help-drawer-body" id="helpDrawerBody"></div>
+  </div>
+  <div id="helpDrawerOverlay" class="help-drawer-overlay" onclick="closeHelp()"></div>
+
+  <!-- Toast notifications -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <script src="js/help.js"></script>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

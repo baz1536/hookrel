@@ -1,0 +1,15 @@
++ Recently Added — {{Metadata.grandparentTitle | {{Metadata.title}}}}
+
+{{Metadata.grandparentTitle | {{Metadata.title}}}} — S{{Metadata.parentIndex | ?}}E{{Metadata.index | ?}}
+{{Metadata.title | —}}
+
+Year:       {{Metadata.year | —}}
+Type:       {{Metadata.type | —}}
+Rating:     {{Metadata.contentRating | —}}
+Aired:      {{Metadata.originallyAvailableAt | —}}
+Audience:   {{Metadata.audienceRating | —}}
+Server:     {{Server.title | —}}
+
+{{Metadata.summary}}
+
+— RoseFlix via HookRel

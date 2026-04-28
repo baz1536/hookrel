@@ -1,0 +1,10 @@
+⬆ Update Available — {{serviceName | Unknown Service}}
+
+A new version is available to install.
+
+Service:    {{serviceName | —}}
+Current:    {{version | —}}
+Available:  {{latestVersion | —}}
+Detected:   {{timestamp | —}}
+
+— RoseFlix Media Status via HookRel

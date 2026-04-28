@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<meta name="supported-color-schemes" content="dark">
+<title>RoseFlix — Recently Added</title>
+</head>
+<body style="margin:0;padding:0;background-color:#0d0d0d;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#0d0d0d;">
+    <tr>
+      <td align="center" style="padding:40px 16px;">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:520px;">
+
+          <!-- Header -->
+          <tr>
+            <td style="background-color:#1a1008;border:1px solid #3a2800;border-radius:14px 14px 0 0;padding:24px 32px;text-align:center;">
+              <svg width="42" height="42" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:0 auto 10px;">
+                <circle cx="40" cy="40" r="38" stroke="#e5a00d" stroke-width="2" opacity="0.35"/>
+                <circle cx="40" cy="40" r="30" fill="rgba(229,160,13,0.08)" stroke="#e5a00d" stroke-width="1.5" opacity="0.5"/>
+                <polygon points="32,24 58,40 32,56" fill="#e5a00d"/>
+              </svg>
+              <div style="font-size:24px;font-weight:700;color:#ffffff;letter-spacing:-0.3px;">Rose<span style="color:#e5a00d;">Flix</span></div>
+              <div style="font-size:14px;color:rgba(255,255,255,0.55);margin-top:4px;font-style:italic;">Your personal streaming universe</div>
+              <table cellpadding="0" cellspacing="0" border="0" style="margin:14px auto 0;border-collapse:separate;">
+                <tr>
+                  <td style="padding-right:8px;">
+                    <a href="https://www.roseflix.uk" target="_blank" rel="noopener noreferrer" style="display:inline-block;background-color:#e5a00d;color:#1a1100;font-size:13px;font-weight:600;text-decoration:none;padding:9px 20px;border-radius:8px;letter-spacing:0.1px;">Visit RoseFlix</a>
+                  </td>
+                  <td>
+                    <a href="https://requests.roseflix.uk" target="_blank" rel="noopener noreferrer" style="display:inline-block;background-color:rgba(229,160,13,0.12);color:#e5a00d;font-size:13px;font-weight:600;text-decoration:none;padding:9px 20px;border-radius:8px;border:1px solid rgba(229,160,13,0.25);letter-spacing:0.1px;">Browse &amp; Request</a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td style="background-color:#161616;border-left:1px solid #2a2a2a;border-right:1px solid #2a2a2a;padding:32px 32px 24px;">
+
+              <!-- Event badge -->
+              <table cellpadding="0" cellspacing="0" border="0" style="margin-bottom:20px;">
+                <tr>
+                  <td style="background-color:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.25);border-radius:6px;padding:4px 12px;">
+                    <span style="font-size:11px;font-weight:600;color:#4ade80;text-transform:uppercase;letter-spacing:0.8px;">&#43; Recently Added</span>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Title + details -->
+              <p style="margin:0 0 4px;font-size:22px;font-weight:700;color:#ffffff;letter-spacing:-0.3px;">{{Metadata.grandparentTitle | {{Metadata.title}}}}</p>
+              <p style="margin:0 0 12px;font-size:13px;color:rgba(255,255,255,0.4);">{{Metadata.year | —}} &mdash; S{{Metadata.parentIndex | ?}}E{{Metadata.index | ?}}</p>
+
+              <!-- Meta chips -->
+              <table cellpadding="0" cellspacing="0" border="0" style="margin-bottom:16px;">
+                <tr>
+                  <td style="background-color:rgba(229,160,13,0.12);border:1px solid rgba(229,160,13,0.2);border-radius:5px;padding:3px 10px;">
+                    <span style="font-size:11px;color:#e5a00d;">{{Metadata.type | —}}</span>
+                  </td>
+                  <td style="padding-left:8px;">
+                    <span style="display:inline-block;background-color:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:5px;padding:3px 10px;font-size:11px;color:rgba(255,255,255,0.75);">{{Metadata.contentRating | —}}</span>
+                  </td>
+                  <td style="padding-left:8px;">
+                    <span style="font-size:11px;color:rgba(255,255,255,0.3);">{{Server.title | —}}</span>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Divider -->
+              <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:16px;">
+                <tr><td style="height:1px;background-color:rgba(255,255,255,0.07);font-size:0;line-height:0;">&nbsp;</td></tr>
+              </table>
+
+              <!-- Episode title + summary -->
+              <p style="margin:0 0 4px;font-size:14px;font-weight:600;color:#ffffff;">{{Metadata.title | —}}</p>
+              <p style="margin:0 0 16px;font-size:13px;color:rgba(255,255,255,0.5);line-height:1.6;">{{Metadata.summary}}</p>
+
+              <!-- Air date + rating -->
+              <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td style="font-size:12px;color:rgba(255,255,255,0.3);">Aired: <span style="color:rgba(255,255,255,0.5);">{{Metadata.originallyAvailableAt | —}}</span></td>
+                  <td align="right" style="font-size:12px;color:rgba(255,255,255,0.3);">Rating: <span style="color:#e5a00d;">{{Metadata.audienceRating | —}}</span></td>
+                </tr>
+              </table>
+
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="background-color:#111111;border:1px solid #2a2a2a;border-top:none;border-radius:0 0 14px 14px;padding:16px 32px;">
+              <p style="margin:0;font-size:11px;color:rgba(255,255,255,0.2);text-align:center;letter-spacing:0.3px;">RoseFlix &mdash; Your personal media server</p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>

@@ -1,0 +1,8 @@
+⚠ Health Check — {{type | Health Issue}}
+
+{{message | No details available}}
+
+Level:      {{level | —}}
+Wiki:       {{wikiUrl | —}}
+
+— Sonarr via HookRel

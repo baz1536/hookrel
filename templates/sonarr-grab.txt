@@ -1,0 +1,13 @@
+⬆ Import — {{series.title | Unknown Series}}
+
+S{{episodes[0].seasonNumber | ?}}E{{episodes[0].episodeNumber | ?}} — {{episodes[0].title | Unknown Episode}}
+
+Quality:    {{release.quality | —}}
+Network:    {{series.network | —}}
+Size:       {{release.sizeFormatted | —}}
+Indexer:    {{release.indexer | —}}
+Release:    {{release.releaseGroup | —}}
+Client:     {{downloadClient | —}}
+Year:       {{series.year | —}}
+
+— Sonarr via HookRel

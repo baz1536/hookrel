@@ -1,0 +1,203 @@
+<div class="page-header">
+  <div>
+    <h1>Message Templates</h1>
+    <p>Notification message templates using <code>{{token.path}}</code> or <code>{{token.path | fallback}}</code> syntax</p>
+  </div>
+  <div class="page-header-actions">
+    <button type="button" class="btn-primary" onclick="Templates.newTemplate()">+ New Message Template</button>
+    <button type="button" class="help-btn" onclick="openHelp('Message Templates', window._help.templates)" title="Help">?</button>
+  </div>
+</div>
+
+<div class="split-panel" id="templatesSplitPanel">
+
+  <!-- Left: template list -->
+  <div class="split-panel-list">
+    <div class="split-panel-list-header">
+      <h3>Message Templates</h3>
+      <span id="templateCount" class="badge badge-muted">0</span>
+    </div>
+    <div id="templateList">
+      <div class="empty-state tpl-list-empty">
+        <div class="empty-state-icon">📝</div>
+        <h3>No templates yet</h3>
+        <p>Create a template to format notifications</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: form + empty state -->
+  <div class="split-panel-right">
+  <div class="split-panel-form" id="templateForm" style="display:none">
+    <div id="templateFormEditingBanner" class="message message-info tpl-editing-banner" style="display:none">
+      Editing template — <strong id="templateFormEditingName"></strong>
+    </div>
+
+    <div class="form-group">
+      <label>Template Name <span class="tpl-required">*</span></label>
+      <input type="text" id="tplName" placeholder="e.g. Sonarr Download">
+    </div>
+
+    <div class="form-group">
+      <label>Source <span class="form-hint tpl-hint-inline">(optional)</span></label>
+      <select id="tplSourceId" title="Select source">
+        <option value="">— Any source —</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Subject</label>
+      <input type="text" id="tplSubject" placeholder="e.g. {{series.title}} — {{eventType}}">
+      <div class="form-hint">Used by email providers. Leave blank for Telegram / Pushover.</div>
+    </div>
+
+    <!-- HTML body -->
+    <div class="form-group">
+      <div class="tpl-body-label-row">
+        <label>HTML Body <span class="form-hint tpl-hint-inline">(email providers)</span></label>
+        <div class="tpl-mode-toggle">
+          <button type="button" class="tpl-mode-btn tpl-mode-btn-active" id="tplModeHtml" onclick="Templates.setBodyMode('html')">HTML</button>
+          <button type="button" class="tpl-mode-btn" id="tplModeSource" onclick="Templates.setBodyMode('source')">Source</button>
+        </div>
+      </div>
+      <div class="tpl-editor-wrap" id="tplEditorWrap">
+        <div class="tpl-editor-toolbar" id="tplEditorToolbar">
+          <div class="tpl-toolbar-group">
+            <button type="button" class="tpl-tb-btn" data-cmd="bold" title="Bold"><b>B</b></button>
+            <button type="button" class="tpl-tb-btn" data-cmd="italic" title="Italic"><i>I</i></button>
+            <button type="button" class="tpl-tb-btn" data-cmd="underline" title="Underline"><u>U</u></button>
+            <button type="button" class="tpl-tb-btn" data-cmd="strike" title="Strikethrough"><s>S</s></button>
+          </div>
+          <div class="tpl-toolbar-sep"></div>
+          <div class="tpl-toolbar-group">
+            <button type="button" class="tpl-tb-btn" data-cmd="h1" title="Heading 1">H1</button>
+            <button type="button" class="tpl-tb-btn" data-cmd="h2" title="Heading 2">H2</button>
+            <button type="button" class="tpl-tb-btn" data-cmd="h3" title="Heading 3">H3</button>
+          </div>
+          <div class="tpl-toolbar-sep"></div>
+          <div class="tpl-toolbar-group">
+            <button type="button" class="tpl-tb-btn" data-cmd="bulletList" title="Bullet list">• List</button>
+            <button type="button" class="tpl-tb-btn" data-cmd="orderedList" title="Ordered list">1. List</button>
+            <button type="button" class="tpl-tb-btn" data-cmd="blockquote" title="Blockquote">" Quote</button>
+          </div>
+          <div class="tpl-toolbar-sep"></div>
+          <div class="tpl-toolbar-group">
+            <button type="button" class="tpl-tb-btn" data-cmd="insertTable" title="Insert table">⊞ Table</button>
+            <button type="button" class="tpl-tb-btn tpl-tb-btn-sm" data-cmd="addRowAfter" title="Add row below">+Row</button>
+            <button type="button" class="tpl-tb-btn tpl-tb-btn-sm" data-cmd="addColAfter" title="Add column right">+Col</button>
+            <button type="button" class="tpl-tb-btn tpl-tb-btn-sm" data-cmd="deleteRow" title="Delete row">-Row</button>
+            <button type="button" class="tpl-tb-btn tpl-tb-btn-sm" data-cmd="deleteCol" title="Delete column">-Col</button>
+            <button type="button" class="tpl-tb-btn tpl-tb-btn-sm" data-cmd="deleteTable" title="Delete table">✕ Table</button>
+          </div>
+          <div class="tpl-toolbar-sep"></div>
+          <div class="tpl-toolbar-group tpl-color-group">
+            <div class="tpl-color-picker-wrap" id="tplTextColorWrap" title="Text colour">
+              <span class="tpl-color-label">A</span>
+              <span class="tpl-color-swatch" id="tplColorSwatch"></span>
+              <div class="tpl-color-palette" id="tplColorPalette">
+                <button type="button" class="tpl-color-none" data-color="" title="Remove colour">✕ Text</button>
+                <button type="button" class="tpl-color-dot tpl-c-red"    data-color="#e03131" title="Red"></button>
+                <button type="button" class="tpl-color-dot tpl-c-orange" data-color="#e8590c" title="Orange"></button>
+                <button type="button" class="tpl-color-dot tpl-c-amber"  data-color="#f08c00" title="Amber"></button>
+                <button type="button" class="tpl-color-dot tpl-c-green"  data-color="#2f9e44" title="Green"></button>
+                <button type="button" class="tpl-color-dot tpl-c-blue"   data-color="#1971c2" title="Blue"></button>
+                <button type="button" class="tpl-color-dot tpl-c-purple" data-color="#7048e8" title="Purple"></button>
+                <button type="button" class="tpl-color-dot tpl-c-pink"   data-color="#d6336c" title="Pink"></button>
+                <button type="button" class="tpl-color-dot tpl-c-teal"   data-color="#0c8599" title="Teal"></button>
+                <button type="button" class="tpl-color-dot tpl-c-grey"   data-color="#868e96" title="Grey"></button>
+                <button type="button" class="tpl-color-dot tpl-c-black"  data-color="#212529" title="Black"></button>
+                <button type="button" class="tpl-color-dot tpl-c-white"  data-color="#f8f9fa" title="White"></button>
+              </div>
+            </div>
+            <div class="tpl-color-picker-wrap" id="tplBgColorWrap" title="Background fill">
+              <span class="tpl-color-label tpl-color-label-bg">▓</span>
+              <span class="tpl-color-swatch" id="tplBgColorSwatch"></span>
+              <div class="tpl-color-palette" id="tplBgColorPalette">
+                <button type="button" class="tpl-color-none" data-color="" title="Remove fill">✕ Fill</button>
+                <button type="button" class="tpl-color-dot tpl-ch-red"    data-color="#ffe3e3" title="Red"></button>
+                <button type="button" class="tpl-color-dot tpl-ch-orange" data-color="#ffe8cc" title="Orange"></button>
+                <button type="button" class="tpl-color-dot tpl-ch-amber"  data-color="#fff3bf" title="Amber"></button>
+                <button type="button" class="tpl-color-dot tpl-ch-green"  data-color="#d3f9d8" title="Green"></button>
+                <button type="button" class="tpl-color-dot tpl-ch-blue"   data-color="#d0ebff" title="Blue"></button>
+                <button type="button" class="tpl-color-dot tpl-ch-purple" data-color="#e5dbff" title="Purple"></button>
+                <button type="button" class="tpl-color-dot tpl-ch-pink"   data-color="#ffdeeb" title="Pink"></button>
+                <button type="button" class="tpl-color-dot tpl-ch-teal"   data-color="#c5f6fa" title="Teal"></button>
+                <button type="button" class="tpl-color-dot tpl-ch-grey"   data-color="#f1f3f5" title="Light grey"></button>
+                <button type="button" class="tpl-color-dot tpl-ch-dark"   data-color="#343a40" title="Dark"></button>
+                <button type="button" class="tpl-color-dot tpl-ch-yellow" data-color="#ffec99" title="Yellow"></button>
+              </div>
+            </div>
+          </div>
+          <div class="tpl-toolbar-sep"></div>
+          <div class="tpl-toolbar-group">
+            <button type="button" class="tpl-tb-btn" data-cmd="hr" title="Horizontal rule">— HR</button>
+            <button type="button" class="tpl-tb-btn" data-cmd="insertImage" title="Insert image">🖼 Image</button>
+            <button type="button" class="tpl-tb-btn" data-cmd="undo" title="Undo">↩ Undo</button>
+            <button type="button" class="tpl-tb-btn" data-cmd="redo" title="Redo">↪ Redo</button>
+          </div>
+        </div>
+        <div id="tplBodyEditor" class="tpl-editor-content"></div>
+        <textarea id="tplBodySource" class="tpl-source-body tpl-hidden" placeholder="Paste or type raw HTML here — {{token}} syntax supported&#10;e.g. <h2>{{series.title}}</h2>&#10;Switch to HTML to preview in the visual editor." spellcheck="false"></textarea>
+        <div class="tpl-editor-resize-handle" id="tplEditorResizeHandle" title="Drag to resize"></div>
+      </div>
+    </div>
+
+    <!-- Plain text body -->
+    <div class="form-group">
+      <label>Plain Text Body <span class="form-hint tpl-hint-inline">(Telegram, Pushover, Slack, Discord etc.)</span></label>
+      <textarea id="tplBodyPlain" class="tpl-plain-body" placeholder="Plain text body — {{token}} syntax supported&#10;e.g. {{series.title}} downloaded"></textarea>
+    </div>
+
+    <!-- Token hints panel -->
+    <div id="tokenHintsPanel" class="tpl-hidden">
+      <div class="card tpl-token-hints-card">
+        <div class="tpl-hints-accordion-header" onclick="Templates.toggleHints()">
+          <span class="tpl-hints-chevron" id="tplHintsChevron">▸</span>
+          <h2 class="tpl-hints-title">Token hints for <span id="tokenHintsSourceName"></span></h2>
+        </div>
+        <div id="tokenHintsList" class="tpl-token-hints-list tpl-hidden"></div>
+      </div>
+    </div>
+
+    <!-- Preview panel -->
+    <div id="previewPanel" class="tpl-hidden">
+      <div class="card tpl-preview-card">
+        <h2>Preview</h2>
+        <div id="previewSubjectRow" class="tpl-preview-subject tpl-hidden">
+          <div class="tpl-preview-label">Subject</div>
+          <div id="previewSubject" class="tpl-preview-subject-text"></div>
+        </div>
+        <div id="previewHtmlRow">
+          <div class="tpl-preview-label">HTML Body</div>
+          <div id="previewBody" class="tpl-preview-body-html"></div>
+        </div>
+        <div id="previewPlainRow" class="tpl-hidden">
+          <div class="tpl-preview-label">Plain Text Body</div>
+          <pre id="previewBodyPlain" class="tpl-preview-body-plain"></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-group tpl-form-actions">
+      <button type="button" class="btn-secondary btn-sm" onclick="Templates.previewTemplate()">👁 Preview</button>
+      <button type="button" class="btn-secondary btn-sm" onclick="Templates.clearForm()">Clear</button>
+      <div class="tpl-form-spacer"></div>
+      <button type="button" class="btn-danger btn-sm tpl-hidden" id="tplDeleteBtn" onclick="Templates.deleteTemplate()">Delete</button>
+      <button type="button" class="btn-primary btn-sm tpl-hidden" id="tplDuplicateBtn" onclick="Templates.duplicateTemplate()">Duplicate</button>
+      <button type="button" class="btn-primary btn-sm" id="tplSaveBtn" onclick="Templates.saveTemplate()">Save Template</button>
+    </div>
+  </div>
+
+  <!-- Right: empty state when no template selected -->
+  <div id="templateFormEmpty" class="split-panel-form tpl-empty-form">
+    <div class="empty-state">
+      <div class="empty-state-icon">📝</div>
+      <h3>Select a template to edit</h3>
+      <p>Or create a new one</p>
+    </div>
+  </div>
+  </div><!-- /.split-panel-right -->
+
+</div>
+
+<script type="module" src="/js/templates.js"></script>

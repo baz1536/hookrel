@@ -1,0 +1,10 @@
++ Series Added — {{series.title | Unknown Series}}
+
+{{series.year | —}} — {{series.network | —}}
+
+Type:       {{series.type | —}}
+TVDB ID:    {{series.tvdbId | —}}
+IMDB ID:    {{series.imdbId | —}}
+Path:       {{series.path | —}}
+
+— Sonarr via HookRel

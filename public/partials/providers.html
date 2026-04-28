@@ -1,0 +1,380 @@
+<div class="page-header">
+  <div>
+    <h1>Providers</h1>
+    <p>Notification delivery providers — email, Telegram, Pushover, Discord, Slack, Gotify, ntfy, Teams</p>
+  </div>
+  <div class="page-header-actions">
+    <button type="button" class="btn-primary" onclick="Providers.newProvider()">+ New Provider</button>
+    <button type="button" class="help-btn" onclick="openHelp('Providers', window._help.providers)" title="Help">?</button>
+  </div>
+</div>
+
+<div class="split-panel" id="providersSplitPanel">
+
+  <!-- Left: provider list -->
+  <div class="split-panel-list">
+    <div class="split-panel-list-header">
+      <h3>Providers</h3>
+      <span id="providerCount" class="badge badge-muted">0</span>
+    </div>
+    <div id="providerList">
+      <div class="empty-state prv-list-empty">
+        <div class="empty-state-icon">🔔</div>
+        <h3>No providers yet</h3>
+        <p>Add a provider to send notifications</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: form + empty state -->
+  <div class="split-panel-right">
+  <div class="split-panel-form prv-hidden" id="providerForm">
+    <div id="providerFormEditingBanner" class="message message-info prv-editing-banner prv-hidden">
+      Editing provider — <strong id="providerFormEditingName"></strong>
+    </div>
+
+    <div class="form-row form-row-2">
+      <div class="form-group">
+        <label>Provider Name <span class="prv-required">*</span></label>
+        <input type="text" id="prvName" placeholder="e.g. My Gmail">
+      </div>
+      <div class="form-group">
+        <label>Type <span class="prv-required">*</span></label>
+        <select id="prvType" title="Select provider type">
+          <option value="">— Select —</option>
+          <option value="discord">Discord</option>
+          <option value="gotify">Gotify</option>
+          <option value="msgraph">Microsoft Graph (Email)</option>
+          <option value="ntfy">ntfy</option>
+          <option value="pushover">Pushover</option>
+          <option value="slack">Slack</option>
+          <option value="smtp">SMTP (Email)</option>
+          <option value="teams">Microsoft Teams</option>
+          <option value="telegram">Telegram</option>
+        </select>
+        <div class="form-hint prv-hidden" id="prvTypeChangeHint">Type cannot be changed after saving — delete and recreate to change type.</div>
+      </div>
+    </div>
+
+    <!-- SMTP fields -->
+    <div id="prvSmtpSection" class="prv-type-section prv-hidden">
+      <div class="prv-type-section-title">SMTP Settings</div>
+      <div class="form-row form-row-2">
+        <div class="form-group">
+          <label>Host</label>
+          <input type="text" id="smtpHost" placeholder="smtp.gmail.com">
+        </div>
+        <div class="form-group">
+          <label>Port</label>
+          <input type="number" id="smtpPort" placeholder="587">
+        </div>
+      </div>
+      <div class="form-row form-row-2">
+        <div class="form-group">
+          <label>Security</label>
+          <select id="smtpSecurity" title="Select security mode" onchange="Providers.onSmtpSecurityChange()">
+            <option value="starttls">STARTTLS (port 587)</option>
+            <option value="ssl">SSL/TLS (port 465)</option>
+            <option value="none">None (port 25)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>From Name</label>
+          <input type="text" id="smtpFromName" placeholder="HookRel">
+        </div>
+      </div>
+      <div class="toggle-row prv-smtp-tls-row">
+        <div>
+          <label>Ignore TLS errors</label>
+          <div class="hint">Bypass certificate validation — use only for self-signed certs on internal servers</div>
+        </div>
+        <label class="toggle" aria-label="Ignore TLS errors">
+          <input type="checkbox" id="smtpIgnoreTLS" title="Ignore TLS errors">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <div class="form-row form-row-2">
+        <div class="form-group">
+          <label>Username</label>
+          <input type="text" id="smtpUsername" placeholder="user@example.com" autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="smtpPassword" placeholder="••••••••" autocomplete="new-password">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>From Address</label>
+        <input type="text" id="smtpFrom" placeholder="hookrel@example.com">
+      </div>
+    </div>
+
+    <!-- Microsoft Graph fields -->
+    <div id="prvMsgraphSection" class="prv-type-section prv-hidden">
+      <div class="prv-type-section-title">Microsoft Graph Settings</div>
+      <div class="form-row form-row-2">
+        <div class="form-group">
+          <label>Tenant ID</label>
+          <input type="text" id="graphTenantId" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx">
+        </div>
+        <div class="form-group">
+          <label>Client ID</label>
+          <input type="text" id="graphClientId" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx">
+        </div>
+      </div>
+      <div class="form-row form-row-2">
+        <div class="form-group">
+          <label>Client Secret</label>
+          <input type="password" id="graphClientSecret" placeholder="••••••••" autocomplete="new-password">
+        </div>
+        <div class="form-group">
+          <label>From Address</label>
+          <input type="text" id="graphFrom" placeholder="hookrel@yourdomain.onmicrosoft.com">
+        </div>
+      </div>
+    </div>
+
+    <!-- Telegram fields -->
+    <div id="prvTelegramSection" class="prv-type-section prv-hidden">
+      <div class="prv-type-section-title">Telegram Settings</div>
+      <div class="message message-info prv-setup-info">
+        <div class="prv-setup-steps">
+          <div class="prv-setup-step"><strong>Bot Token</strong> — open Telegram and message <code>@BotFather</code>. Send <code>/newbot</code>, follow the prompts, and copy the token it gives you (format: <code>123456789:ABCdef...</code>).</div>
+          <div class="prv-setup-step"><strong>Chat ID</strong> — add your bot to a chat or channel, then message <code>@userinfobot</code> in that chat to get its ID. Channel IDs start with <code>-100</code>.</div>
+        </div>
+      </div>
+      <div class="form-row form-row-2">
+        <div class="form-group">
+          <label>Bot Token</label>
+          <input type="password" id="telegramBotToken" placeholder="••••••••" autocomplete="new-password">
+        </div>
+        <div class="form-group">
+          <label>Chat ID</label>
+          <input type="text" id="telegramChatId" placeholder="-100xxxxxxxxxx">
+        </div>
+      </div>
+    </div>
+
+    <!-- Pushover fields -->
+    <div id="prvPushoverSection" class="prv-type-section prv-hidden">
+      <div class="prv-type-section-title">Pushover Settings</div>
+      <div class="message message-info prv-setup-info">
+        <div class="prv-setup-steps">
+          <div class="prv-setup-step"><strong>API Token</strong> — log in at <code>pushover.net</code>, go to <em>Your Applications</em> and create a new application. The API token is shown on the application page.</div>
+          <div class="prv-setup-step"><strong>User Key</strong> — found on your Pushover dashboard at <code>pushover.net</code> under <em>Your User Key</em> (top right of the main page, starts with <code>u</code>).</div>
+        </div>
+      </div>
+      <div class="form-row form-row-2">
+        <div class="form-group">
+          <label>API Token</label>
+          <input type="password" id="pushoverApiToken" placeholder="••••••••" autocomplete="new-password">
+        </div>
+        <div class="form-group">
+          <label>User Key</label>
+          <input type="text" id="pushoverUserKey" placeholder="uxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
+        </div>
+      </div>
+      <div class="form-row form-row-2">
+        <div class="form-group">
+          <label>Priority</label>
+          <select id="pushoverPriority" title="Select notification priority">
+            <option value="-1">Low</option>
+            <option value="0" selected>Normal</option>
+            <option value="1">High</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Sound <span class="form-hint prv-hint-inline">(optional)</span></label>
+          <select id="pushoverSound" title="Select notification sound">
+            <option value="">— Device default —</option>
+            <optgroup label="Standard">
+              <option value="pushover">Pushover</option>
+              <option value="bike">Bike</option>
+              <option value="bugle">Bugle</option>
+              <option value="cashregister">Cash Register</option>
+              <option value="classical">Classical</option>
+              <option value="cosmic">Cosmic</option>
+              <option value="falling">Falling</option>
+              <option value="gamelan">Gamelan</option>
+              <option value="incoming">Incoming</option>
+              <option value="intermission">Intermission</option>
+              <option value="magic">Magic</option>
+              <option value="mechanical">Mechanical</option>
+              <option value="pianobar">Piano Bar</option>
+              <option value="siren">Siren</option>
+              <option value="spacealarm">Space Alarm</option>
+              <option value="tugboat">Tug Boat</option>
+            </optgroup>
+            <optgroup label="Long">
+              <option value="alien">Alien Alarm</option>
+              <option value="climb">Climb</option>
+              <option value="persistent">Persistent</option>
+              <option value="echo">Pushover Echo</option>
+              <option value="updown">Up Down</option>
+            </optgroup>
+            <optgroup label="Other">
+              <option value="vibrate">Vibrate Only</option>
+              <option value="none">None (silent)</option>
+            </optgroup>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Device <span class="form-hint prv-hint-inline">(optional)</span></label>
+        <input type="text" id="pushoverDevice" placeholder="Leave blank for all devices">
+      </div>
+    </div>
+
+    <!-- Discord fields -->
+    <div id="prvDiscordSection" class="prv-type-section prv-hidden">
+      <div class="prv-type-section-title">Discord Settings</div>
+      <div class="message message-info prv-setup-info">
+        <div class="prv-setup-steps">
+          <div class="prv-setup-step"><strong>Webhook URL</strong> — in Discord, open the channel settings → <em>Integrations</em> → <em>Webhooks</em> → <em>New Webhook</em>. Copy the webhook URL (format: <code>https://discord.com/api/webhooks/ID/TOKEN</code>).</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Webhook URL</label>
+        <input type="text" id="discordWebhookUrl" placeholder="https://discord.com/api/webhooks/...">
+      </div>
+    </div>
+
+    <!-- Slack fields -->
+    <div id="prvSlackSection" class="prv-type-section prv-hidden">
+      <div class="prv-type-section-title">Slack Settings</div>
+      <div class="message message-info prv-setup-info">
+        <div class="prv-setup-steps">
+          <div class="prv-setup-step"><strong>Webhook URL</strong> — go to <code>api.slack.com/apps</code>, create an app, enable <em>Incoming Webhooks</em>, and add a webhook to your workspace. Copy the URL (format: <code>https://hooks.slack.com/services/...</code>).</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Webhook URL</label>
+        <input type="text" id="slackWebhookUrl" placeholder="https://hooks.slack.com/services/...">
+      </div>
+    </div>
+
+    <!-- Gotify fields -->
+    <div id="prvGotifySection" class="prv-type-section prv-hidden">
+      <div class="prv-type-section-title">Gotify Settings</div>
+      <div class="message message-info prv-setup-info">
+        <div class="prv-setup-steps">
+          <div class="prv-setup-step"><strong>Server URL</strong> — the base URL of your Gotify instance (e.g. <code>https://gotify.example.com</code>).</div>
+          <div class="prv-setup-step"><strong>App Token</strong> — in Gotify go to <em>Apps</em>, create a new application, and copy its token.</div>
+        </div>
+      </div>
+      <div class="form-row form-row-2">
+        <div class="form-group">
+          <label>Server URL</label>
+          <input type="text" id="gotifyServerUrl" placeholder="https://gotify.example.com">
+        </div>
+        <div class="form-group">
+          <label>App Token</label>
+          <input type="password" id="gotifyAppToken" placeholder="••••••••" autocomplete="new-password">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Priority <span class="form-hint prv-hint-inline">(0–10, default 5)</span></label>
+        <input type="number" id="gotifyPriority" placeholder="5" min="0" max="10">
+      </div>
+    </div>
+
+    <!-- ntfy fields -->
+    <div id="prvNtfySection" class="prv-type-section prv-hidden">
+      <div class="prv-type-section-title">ntfy Settings</div>
+      <div class="message message-info prv-setup-info">
+        <div class="prv-setup-steps">
+          <div class="prv-setup-step"><strong>Server URL</strong> — use <code>https://ntfy.sh</code> for the public server, or your self-hosted instance URL.</div>
+          <div class="prv-setup-step"><strong>Topic</strong> — a unique name for your notification channel (e.g. <code>hookrel-alerts</code>). Anyone who knows the topic can subscribe, so use something unguessable or enable auth.</div>
+          <div class="prv-setup-step"><strong>Token</strong> — optional. Required if your ntfy server has access control enabled. Generate via <code>ntfy token add</code> or the web UI.</div>
+        </div>
+      </div>
+      <div class="form-row form-row-2">
+        <div class="form-group">
+          <label>Server URL</label>
+          <input type="text" id="ntfyServerUrl" placeholder="https://ntfy.sh">
+        </div>
+        <div class="form-group">
+          <label>Topic</label>
+          <input type="text" id="ntfyTopic" placeholder="hookrel-alerts">
+        </div>
+      </div>
+      <div class="form-row form-row-2">
+        <div class="form-group">
+          <label>Priority <span class="form-hint prv-hint-inline">(optional)</span></label>
+          <select id="ntfyPriority" title="Select priority">
+            <option value="default">Default</option>
+            <option value="min">Min</option>
+            <option value="low">Low</option>
+            <option value="high">High</option>
+            <option value="max">Max</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Token <span class="form-hint prv-hint-inline">(optional)</span></label>
+          <input type="password" id="ntfyToken" placeholder="••••••••" autocomplete="new-password">
+        </div>
+      </div>
+    </div>
+
+    <!-- Teams fields -->
+    <div id="prvTeamsSection" class="prv-type-section prv-hidden">
+      <div class="prv-type-section-title">Microsoft Teams Settings</div>
+      <div class="message message-info prv-setup-info">
+        <div class="prv-setup-steps">
+          <div class="prv-setup-step"><strong>Webhook URL</strong> — in Teams, go to the channel where you want notifications → click <em>···</em> → <em>Workflows</em> → search for <em>"Post to a channel when a webhook request is received"</em> → follow the setup and copy the URL provided at the end.</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Webhook URL</label>
+        <input type="text" id="teamsWebhookUrl" placeholder="https://prod-xx.logic.azure.com/...">
+      </div>
+    </div>
+
+    <!-- Recipients (email providers only) -->
+    <div id="prvRecipientsSection" class="prv-type-section prv-hidden">
+      <div class="prv-type-section-title">Recipients</div>
+      <div class="form-group">
+        <label>To</label>
+        <input type="text" id="prvRecipients" placeholder="user@example.com, user2@example.com">
+        <div class="form-hint prv-recipients-hint">Comma-separated list of recipient addresses</div>
+      </div>
+      <div class="form-row form-row-2">
+        <div class="form-group">
+          <label>CC <span class="form-hint prv-hint-inline">(optional)</span></label>
+          <input type="text" id="prvCc" placeholder="cc@example.com">
+        </div>
+        <div class="form-group">
+          <label>BCC <span class="form-hint prv-hint-inline">(optional)</span></label>
+          <input type="text" id="prvBcc" placeholder="bcc@example.com">
+        </div>
+      </div>
+    </div>
+
+    <!-- Test notification -->
+    <div id="prvTestSection" class="prv-type-section prv-hidden">
+      <div class="prv-test-row">
+        <button type="button" class="btn-secondary btn-sm" onclick="Providers.testProvider()">Send Test Notification</button>
+      </div>
+    </div>
+
+    <div class="btn-group prv-form-actions">
+      <button type="button" class="btn-secondary btn-sm" onclick="Providers.clearForm()">Clear</button>
+      <div class="prv-form-spacer"></div>
+      <button type="button" class="btn-danger btn-sm prv-hidden" id="prvDeleteBtn" onclick="Providers.deleteProvider()">Delete</button>
+      <button type="button" class="btn-primary btn-sm" id="prvSaveBtn" onclick="Providers.saveProvider()">Save Provider</button>
+    </div>
+  </div>
+
+  <!-- Right: empty state -->
+  <div id="providerFormEmpty" class="split-panel-form prv-empty-form">
+    <div class="empty-state">
+      <div class="empty-state-icon">🔔</div>
+      <h3>Select a provider to edit</h3>
+      <p>Or create a new one</p>
+    </div>
+  </div>
+  </div><!-- /.split-panel-right -->
+
+</div>
+
+<script type="module" src="/js/providers.js"></script>

@@ -1,0 +1,60 @@
+<div class="page-header">
+  <div>
+    <h1>Dashboard</h1>
+    <p>Overview of webhook activity and system status</p>
+  </div>
+  <div class="page-header-actions">
+    <button type="button" class="btn-secondary btn-sm" onclick="Dashboard.refresh()">Refresh</button>
+    <button type="button" class="help-btn" onclick="openHelp('Dashboard', window._help.dashboard)" title="Help">?</button>
+  </div>
+</div>
+
+<!-- Stat cards -->
+<div class="dash-stats" id="dashStats">
+  <div class="dash-stat-card dash-stat-link" onclick="switchTab('sources')"><div class="dash-stat-value" id="statSources">—</div><div class="dash-stat-label">Sources</div></div>
+  <div class="dash-stat-card dash-stat-link" onclick="switchTab('providers')"><div class="dash-stat-value" id="statProviders">—</div><div class="dash-stat-label">Providers</div></div>
+  <div class="dash-stat-card dash-stat-link" onclick="switchTab('templates')"><div class="dash-stat-value" id="statTemplates">—</div><div class="dash-stat-label">Message Templates</div></div>
+  <div class="dash-stat-card dash-stat-link" onclick="switchTab('rules')"><div class="dash-stat-value" id="statRules">—</div><div class="dash-stat-label">Active Rules</div></div>
+  <div class="dash-stat-card dash-stat-accent dash-stat-link" onclick="switchTabLogs('inbound')"><div class="dash-stat-value" id="statInbound24h">—</div><div class="dash-stat-label">Webhooks (24h)</div></div>
+  <div class="dash-stat-card dash-stat-accent dash-stat-link" onclick="switchTabLogs('outbound')"><div class="dash-stat-value" id="statOutbound24h">—</div><div class="dash-stat-label">Notifications (24h)</div></div>
+  <div class="dash-stat-card dash-stat-link" onclick="switchTabLogs('inbound')"><div class="dash-stat-value" id="statTotal">—</div><div class="dash-stat-label">Total Webhooks</div></div>
+  <div class="dash-stat-card dash-stat-error dash-stat-link" id="statErrorCard" onclick="switchTabLogs('outbound')"><div class="dash-stat-value" id="statErrors">—</div><div class="dash-stat-label">Errors (24h)</div></div>
+</div>
+
+<!-- Charts row -->
+<div class="dash-charts">
+  <div class="card dash-chart-card">
+    <h2 class="dash-section-title">Webhooks — Last 7 Days</h2>
+    <div id="dashTrendChart" class="dash-bar-chart"><p class="loading">Loading…</p></div>
+  </div>
+  <div class="card dash-chart-card">
+    <h2 class="dash-section-title">Event Types (7 Days)</h2>
+    <div id="dashEventChart"><p class="loading">Loading…</p></div>
+  </div>
+</div>
+
+<!-- Status breakdown + activity feed -->
+<div class="dash-lower">
+  <div class="card dash-breakdown-card">
+    <h2 class="dash-section-title">7-Day Status Breakdown</h2>
+    <div id="dashBreakdown"><p class="loading">Loading…</p></div>
+  </div>
+
+  <div class="card dash-feed-card">
+    <h2 class="dash-section-title">Recent Activity</h2>
+    <div id="dashFeed"><p class="loading">Loading…</p></div>
+  </div>
+</div>
+
+<script>
+window.switchTabLogs = async function(subTab) {
+    await switchTab('logs');
+    // logs.js init runs synchronously on load; poll briefly in case it's first load
+    let attempts = 0;
+    while (!window.Logs && attempts++ < 20) {
+        await new Promise(r => setTimeout(r, 50));
+    }
+    if (window.Logs) window.Logs.switchTab(subTab);
+};
+</script>
+<script type="module" src="/js/dashboard.js"></script>

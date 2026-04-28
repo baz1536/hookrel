@@ -1,0 +1,9 @@
+🔴 Service Down — {{serviceName | Unknown Service}}
+
+This service is not responding and may be unavailable.
+
+Service:    {{serviceName | —}}
+Status:     Offline
+Detected:   {{timestamp | —}}
+
+— RoseFlix Media Status via HookRel

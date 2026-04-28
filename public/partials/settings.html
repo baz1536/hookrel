@@ -1,0 +1,96 @@
+<div class="page-header">
+  <div>
+    <h1>Settings</h1>
+    <p>System configuration and account settings</p>
+  </div>
+  <button type="button" class="help-btn" onclick="openHelp('Settings', window._help.settings)" title="Help">?</button>
+</div>
+
+<!-- Row 1: System settings -->
+<div class="settings-row">
+
+  <div class="card settings-card">
+    <h2 class="settings-card-title">Log &amp; Data Retention</h2>
+    <p class="form-hint settings-card-hint">Inbound/outbound log entries and system log files older than this will be deleted automatically each day.</p>
+    <div class="form-row form-row-2">
+      <div class="form-group">
+        <label>Retention Period (days)</label>
+        <input type="number" id="retentionDays" min="1" max="3650" placeholder="90">
+      </div>
+      <div class="form-group settings-field-align">
+        <button type="button" class="btn-primary btn-sm" onclick="Settings.saveRetention()">Save</button>
+      </div>
+    </div>
+    <div id="retentionResult" class="settings-result settings-hidden"></div>
+  </div>
+
+  <div class="card settings-card">
+    <h2 class="settings-card-title">Encryption Status</h2>
+    <p class="form-hint settings-card-hint">Sensitive provider credentials are stored encrypted at rest using AES-256-GCM.</p>
+    <div id="encryptionStatus"><p class="loading">Loading…</p></div>
+  </div>
+
+  <div class="card settings-card">
+    <h2 class="settings-card-title">Change Password</h2>
+    <div class="form-group">
+      <label>Current Password</label>
+      <input type="password" id="currentPassword" autocomplete="current-password" placeholder="Enter current password">
+    </div>
+    <div class="form-group">
+      <label>New Password</label>
+      <input type="password" id="newPassword" autocomplete="new-password" placeholder="Minimum 8 characters">
+    </div>
+    <div class="form-group">
+      <label>Confirm New Password</label>
+      <input type="password" id="confirmPassword" autocomplete="new-password" placeholder="Repeat new password">
+    </div>
+    <button type="button" class="btn-primary btn-sm" onclick="Settings.changePassword()">Update Password</button>
+    <div id="passwordResult" class="settings-result settings-hidden"></div>
+  </div>
+
+</div>
+
+<!-- User Management -->
+<div class="card settings-users-card">
+  <div class="settings-users-header">
+    <div>
+      <h2 class="settings-card-title">User Management</h2>
+      <p class="form-hint">Manage accounts that can access HookRel.</p>
+    </div>
+    <button type="button" class="btn-primary btn-sm" onclick="Settings.newUser()">+ New User</button>
+  </div>
+
+  <div id="userList"><p class="loading">Loading…</p></div>
+
+  <!-- Inline add/edit form -->
+  <div id="userForm" class="settings-user-form settings-hidden">
+    <hr class="settings-divider">
+    <h3 id="userFormTitle" class="settings-user-form-title">New User</h3>
+    <div class="form-row form-row-3">
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" id="userFormUsername" autocomplete="off" placeholder="username">
+      </div>
+      <div class="form-group">
+        <label>Password <span id="userFormPasswordHint" class="form-hint settings-hidden">(leave blank to keep current)</span></label>
+        <input type="password" id="userFormPassword" autocomplete="new-password" placeholder="Minimum 8 characters">
+      </div>
+      <div class="form-group">
+        <label>Role</label>
+        <select id="userFormRole" title="Select role">
+          <option value="admin">Admin</option>
+          <option value="user">User</option>
+        </select>
+      </div>
+    </div>
+    <div class="btn-group settings-user-form-actions">
+      <button type="button" class="btn-secondary btn-sm" onclick="Settings.cancelUser()">Cancel</button>
+      <div class="settings-form-spacer"></div>
+      <button type="button" class="btn-danger btn-sm settings-hidden" id="userDeleteBtn" onclick="Settings.deleteUser()">Delete</button>
+      <button type="button" class="btn-primary btn-sm" id="userSaveBtn" onclick="Settings.saveUser()">Save User</button>
+    </div>
+    <div id="userFormResult" class="settings-result settings-hidden"></div>
+  </div>
+</div>
+
+<script type="module" src="/js/settings.js"></script>

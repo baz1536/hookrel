@@ -1,0 +1,10 @@
+✅ Service Restored — {{serviceName | Unknown Service}}
+
+This service is back online.
+
+Service:    {{serviceName | —}}
+Status:     Online
+Version:    {{version | —}}
+Restored:   {{timestamp | —}}
+
+— RoseFlix Media Status via HookRel

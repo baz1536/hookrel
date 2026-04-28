@@ -1,0 +1,89 @@
+<div class="page-header">
+  <div>
+    <h1>Groups</h1>
+    <p>Organise rules into groups. Each group has its own match mode and active toggle.</p>
+  </div>
+  <div class="page-header-actions">
+    <button type="button" class="btn-primary" onclick="Groups.newGroup()">+ New Group</button>
+  </div>
+</div>
+
+<div class="split-panel">
+
+  <!-- Left: group list -->
+  <div class="split-panel-list">
+    <div class="split-panel-list-header">
+      <h3>Groups</h3>
+      <span id="groupCount" class="badge badge-muted">0</span>
+    </div>
+    <div id="groupList">
+      <div class="empty-state">
+        <div class="empty-state-icon">📁</div>
+        <h3>No groups yet</h3>
+        <p>Create a group to start organising rules</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: form + empty state -->
+  <div class="split-panel-right">
+  <div class="split-panel-form" id="groupForm" style="display:none">
+    <div id="groupEditingBanner" class="message message-info rule-editing-banner" style="display:none">
+      Editing group — <strong id="groupEditingName"></strong>
+    </div>
+
+    <div class="form-group">
+      <label>Group Name <span class="rule-required">*</span></label>
+      <input type="text" id="groupName" placeholder="e.g. Sonarr, Radarr, System Alerts">
+    </div>
+
+    <div class="form-group">
+      <label>Description <span class="form-hint tpl-hint-inline">(optional)</span></label>
+      <input type="text" id="groupDescription" placeholder="What this group is for">
+    </div>
+
+    <div class="form-row form-row-2">
+      <div class="form-group">
+        <label>Match Mode</label>
+        <select id="groupMatchMode">
+          <option value="all">All matching rules fire</option>
+          <option value="first">First matching rule only</option>
+        </select>
+        <div class="form-hint">First match stops after the first rule in this group fires.</div>
+      </div>
+    </div>
+
+    <div class="toggle-row">
+      <div>
+        <label>Active</label>
+        <div class="hint">Inactive groups are skipped entirely during dispatch</div>
+      </div>
+      <label class="toggle">
+        <input type="checkbox" id="groupActive" checked>
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+
+    <div id="groupRuleCount" class="grp-rule-count grp-hidden"></div>
+
+    <div class="btn-group rule-form-buttons">
+      <button type="button" class="btn-secondary btn-sm" onclick="Groups.clearForm()">Clear</button>
+      <div class="rule-form-spacer"></div>
+      <button type="button" class="btn-danger btn-sm" id="groupDeleteBtn" onclick="Groups.deleteGroup()" style="display:none">Delete</button>
+      <button type="button" class="btn-primary btn-sm" id="groupSaveBtn" onclick="Groups.saveGroup()">Save Group</button>
+    </div>
+  </div>
+
+  <!-- Right: empty state -->
+  <div id="groupFormEmpty" class="split-panel-form rule-empty-form">
+    <div class="empty-state">
+      <div class="empty-state-icon">📁</div>
+      <h3>Select a group to edit</h3>
+      <p>Or create a new one</p>
+    </div>
+  </div>
+  </div><!-- /.split-panel-right -->
+
+</div>
+
+<script type="module" src="/js/groups.js"></script>

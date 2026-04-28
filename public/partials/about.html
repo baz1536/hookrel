@@ -1,0 +1,74 @@
+<div class="page-header">
+  <div>
+    <h1>About</h1>
+    <p>HookRel — Webhooks in. Notifications out.</p>
+  </div>
+</div>
+
+<!-- Hero -->
+<div class="about-hero card">
+  <div class="about-hero-wordmark">
+    <span class="about-hero-hook">Hook</span><span class="about-hero-rel">Rel</span>
+  </div>
+  <p class="about-hero-slogan">Webhooks in. Notifications out.</p>
+  <p class="about-hero-desc">HookRel is a self-hosted webhook relay system. It receives webhook events from your applications, matches them against your rules, formats them using templates, and dispatches notifications to your chosen providers — all without writing a single line of code.</p>
+</div>
+
+<!-- How it works -->
+<div class="card about-section">
+  <h2 class="about-section-title">How It Works</h2>
+  <div class="about-flow">
+    <div class="about-flow-step">
+      <div class="about-flow-icon">📡</div>
+      <div class="about-flow-label">Source</div>
+      <div class="about-flow-desc">Your application sends a webhook to HookRel's unique URL</div>
+    </div>
+    <div class="about-flow-arrow">→</div>
+    <div class="about-flow-step">
+      <div class="about-flow-icon">🔀</div>
+      <div class="about-flow-label">Rules</div>
+      <div class="about-flow-desc">HookRel matches the event type against your configured rules</div>
+    </div>
+    <div class="about-flow-arrow">→</div>
+    <div class="about-flow-step">
+      <div class="about-flow-icon">📝</div>
+      <div class="about-flow-label">Message Template</div>
+      <div class="about-flow-desc">The payload is rendered through your message template</div>
+    </div>
+    <div class="about-flow-arrow">→</div>
+    <div class="about-flow-step">
+      <div class="about-flow-icon">🔔</div>
+      <div class="about-flow-label">Provider</div>
+      <div class="about-flow-desc">The notification is delivered via your registered providers</div>
+    </div>
+  </div>
+</div>
+
+<!-- Key concepts -->
+<div class="about-concepts-grid">
+  <div class="card about-concept">
+    <div class="about-concept-icon">📡</div>
+    <h3>Sources</h3>
+    <p>Each source represents an application that sends webhooks — Sonarr, Radarr, Gitea, or any custom app. Every source gets a unique URL and bearer token for authentication.</p>
+  </div>
+  <div class="card about-concept">
+    <div class="about-concept-icon">🔔</div>
+    <h3>Providers</h3>
+    <p>Providers are where notifications go. HookRel supports SMTP email, Microsoft Graph (Microsoft 365), Telegram bots, and Pushover push notifications.</p>
+  </div>
+  <div class="card about-concept">
+    <div class="about-concept-icon">📝</div>
+    <h3>Message Templates</h3>
+    <p>Message Templates define the notification format using <code>{{token.path}}</code> syntax. Use the built-in rich editor to build HTML emails with formatting, tables, and colour — or plain text for plain-text providers.</p>
+  </div>
+  <div class="card about-concept">
+    <div class="about-concept-icon">🔀</div>
+    <h3>Rules</h3>
+    <p>Rules wire everything together — matching a source and event type to a provider and template. Multiple rules can fire for the same event, or just the first match depending on your match mode setting.</p>
+  </div>
+</div>
+
+<!-- Technical info (loaded dynamically) -->
+<div id="about-info">
+  <p class="loading">Loading application information...</p>
+</div>

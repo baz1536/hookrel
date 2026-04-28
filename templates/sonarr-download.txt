@@ -1,0 +1,9 @@
+✅ Downloaded — {{series.title | Unknown Series}}
+
+S{{episodes[0].seasonNumber | ?}}E{{episodes[0].episodeNumber | ?}} — {{episodes[0].title | Unknown Episode}}
+
+Quality:    {{episodeFiles[0].quality | —}}
+File Size:  {{episodeFiles[0].sizeFormatted | —}}
+Path:       {{episodeFiles[0].path | —}}
+Client:     {{downloadClient | —}}
+Air Date:   {{episodes[0].airDate | —}}

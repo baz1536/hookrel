@@ -1,0 +1,125 @@
+<div class="page-header">
+  <div>
+    <h1>Sources</h1>
+    <p>Webhook sources — each gets a unique URL and token</p>
+  </div>
+  <div class="page-header-actions">
+    <button type="button" class="btn-primary" onclick="Sources.newSource()">+ New Source</button>
+    <button type="button" class="help-btn" onclick="openHelp('Sources', window._help.sources)" title="Help">?</button>
+  </div>
+</div>
+
+<div class="split-panel" id="sourcesSplitPanel">
+
+  <!-- Left: source list -->
+  <div class="split-panel-list">
+    <div class="split-panel-list-header">
+      <h3>Sources</h3>
+      <span id="sourceCount" class="badge badge-muted">0</span>
+    </div>
+    <div id="sourceList">
+      <div class="empty-state src-list-empty">
+        <div class="empty-state-icon">📡</div>
+        <h3>No sources yet</h3>
+        <p>Add a source to start receiving webhooks</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: form + empty state -->
+  <div class="split-panel-right">
+  <div class="split-panel-form src-hidden" id="sourceForm">
+    <div id="sourceFormEditingBanner" class="message message-info src-editing-banner src-hidden">
+      Editing source — <strong id="sourceFormEditingName"></strong>
+    </div>
+
+    <div class="form-group">
+      <label>Source Name <span class="src-required">*</span></label>
+      <input type="text" id="srcName" placeholder="e.g. Sonarr">
+    </div>
+
+    <div class="form-group">
+      <label>Application Type</label>
+      <select id="srcCatalogueId" title="Select application type">
+        <option value="">Loading…</option>
+      </select>
+      <div class="form-hint" id="srcCatalogueDesc"></div>
+    </div>
+
+    <!-- Custom source info panel -->
+    <div id="srcCustomInfo" class="message message-info src-hidden">
+      Once you save this source and send a webhook to its URL, HookRel will automatically learn the available tokens from the payload. Open a Message Template and select this source to see the discovered tokens as clickable hints.
+    </div>
+
+    <div class="btn-group src-form-actions">
+      <button type="button" class="btn-secondary btn-sm" onclick="Sources.clearForm()">Clear</button>
+      <div class="src-form-spacer"></div>
+      <button type="button" class="btn-danger btn-sm src-hidden" id="srcDeleteBtn" onclick="Sources.deleteSource()">Delete</button>
+      <button type="button" class="btn-primary btn-sm" id="srcSaveBtn" onclick="Sources.saveSource()">Save Source</button>
+    </div>
+
+    <!-- Webhook URL + Token (shown after save) -->
+    <div id="srcConnectionPanel" class="src-hidden">
+      <hr class="src-divider">
+      <h3 class="src-connection-title">Connection Details</h3>
+
+      <div class="form-group">
+        <label>Webhook URL</label>
+        <div class="src-copy-row">
+          <input type="text" id="srcWebhookUrl" readonly class="src-copy-input" title="Webhook URL">
+          <button type="button" class="btn-secondary btn-sm" onclick="Sources.copyUrl()">Copy</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Token</label>
+        <div class="src-copy-row">
+          <input type="text" id="srcToken" readonly class="src-copy-input src-token-value" title="Bearer token">
+          <button type="button" class="btn-secondary btn-sm" onclick="Sources.copyToken()">Copy</button>
+          <button type="button" class="btn-secondary btn-sm" onclick="Sources.rotateToken()">Rotate</button>
+        </div>
+        <div class="form-hint">Send as <code>Authorization: Bearer &lt;token&gt;</code> or <code>X-API-Key: &lt;token&gt;</code></div>
+      </div>
+
+      <!-- Learned tokens status (custom sources only) -->
+      <div id="srcLearnedPanel" class="src-hidden">
+        <div class="src-learned-header">
+          <span class="src-learned-title">Learned Tokens</span>
+          <span id="srcLearnedBadge" class="badge badge-success">0 learned</span>
+        </div>
+        <div id="srcLearnedTokens" class="tpl-token-hints-list src-learned-tokens"></div>
+        <div class="form-hint">Tokens are discovered automatically when webhooks are received.</div>
+      </div>
+
+      <!-- Parse-payload tester -->
+      <div class="form-group">
+        <label>Test Payload Parser</label>
+        <textarea id="srcTestPayload" rows="5" placeholder="{&quot;eventType&quot;:&quot;Download&quot;,&quot;series&quot;:{&quot;title&quot;:&quot;Breaking Bad&quot;}}"></textarea>
+        <div class="src-parse-actions">
+          <button type="button" class="btn-secondary btn-sm" onclick="Sources.parsePayload()">Parse Payload</button>
+        </div>
+      </div>
+      <div id="srcParseResult" class="src-hidden">
+        <div class="card src-parse-card">
+          <div class="src-parse-label">Event Type</div>
+          <div id="srcParseEventType" class="src-parse-event"></div>
+          <div class="src-parse-label src-parse-tokens-label">Extracted Tokens</div>
+          <div id="srcParseTokens" class="tpl-token-hints-list"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: empty state -->
+  <div id="sourceFormEmpty" class="split-panel-form src-empty-form">
+    <div class="empty-state">
+      <div class="empty-state-icon">📡</div>
+      <h3>Select a source to edit</h3>
+      <p>Or create a new one</p>
+    </div>
+  </div>
+  </div><!-- /.split-panel-right -->
+
+</div>
+
+<script type="module" src="/js/sources.js"></script>

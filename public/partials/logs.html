@@ -1,0 +1,98 @@
+<div class="page-header">
+  <div>
+    <h1>Logs</h1>
+    <p>System, inbound webhook, and outbound notification logs</p>
+  </div>
+  <button type="button" class="help-btn" onclick="openHelp('Logs', window._help.logs)" title="Help">?</button>
+</div>
+
+<!-- Tab strip -->
+<div class="logs-tab-strip">
+  <button type="button" class="logs-tab-btn active" onclick="Logs.switchTab('system')" id="logsTabSystem">System</button>
+  <button type="button" class="logs-tab-btn" onclick="Logs.switchTab('inbound')" id="logsTabInbound">Inbound</button>
+  <button type="button" class="logs-tab-btn" onclick="Logs.switchTab('outbound')" id="logsTabOutbound">Outbound</button>
+</div>
+
+<!-- System logs -->
+<div id="logsSystem" class="logs-panel active">
+  <div class="logs-filters">
+    <div class="form-group">
+      <label>Date</label>
+      <select id="sysDateSel" title="Select log date"></select>
+    </div>
+    <div class="form-group">
+      <label>Level</label>
+      <select id="sysLevelSel" title="Filter by log level">
+        <option value="">All</option>
+        <option value="error">Error</option>
+        <option value="warn">Warn</option>
+        <option value="info">Info</option>
+        <option value="debug">Debug</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Search</label>
+      <input type="text" id="sysSearch" placeholder="Filter messages…">
+    </div>
+    <button type="button" class="btn-secondary btn-sm" onclick="Logs.loadSystem()">Refresh</button>
+  </div>
+  <div class="card logs-card">
+    <div id="sysLogList"><p class="loading logs-loading">Loading…</p></div>
+    <div class="logs-pagination logs-pagination-wrap" id="sysPagination"></div>
+  </div>
+</div>
+
+<!-- Inbound logs -->
+<div id="logsInbound" class="logs-panel">
+  <div class="logs-filters">
+    <div class="form-group">
+      <label>Source</label>
+      <select id="inbSourceSel" title="Filter by source"><option value="">All sources</option></select>
+    </div>
+    <div class="form-group">
+      <label>Event Type</label>
+      <input type="text" id="inbEventType" placeholder="e.g. Download">
+    </div>
+    <div class="form-group">
+      <label>Status</label>
+      <select id="inbStatusSel" title="Filter by dispatch status">
+        <option value="">All</option>
+        <option value="dispatched">Dispatched</option>
+        <option value="partial">Partial</option>
+        <option value="no_rules">No Rules</option>
+        <option value="error">Error</option>
+        <option value="pending">Pending</option>
+      </select>
+    </div>
+    <button type="button" class="btn-secondary btn-sm" onclick="Logs.loadInbound()">Refresh</button>
+  </div>
+  <div class="card logs-card">
+    <div id="inbLogList"><p class="loading logs-loading">Loading…</p></div>
+    <div class="logs-pagination logs-pagination-wrap" id="inbPagination"></div>
+  </div>
+</div>
+
+<!-- Outbound logs -->
+<div id="logsOutbound" class="logs-panel">
+  <div class="logs-filters">
+    <div class="form-group">
+      <label>Provider</label>
+      <select id="outProviderSel" title="Filter by provider"><option value="">All providers</option></select>
+    </div>
+    <div class="form-group">
+      <label>Status</label>
+      <select id="outStatusSel" title="Filter by status">
+        <option value="">All</option>
+        <option value="ok">OK</option>
+        <option value="error">Error</option>
+      </select>
+    </div>
+    <button type="button" class="btn-secondary btn-sm" onclick="Logs.loadOutbound()">Refresh</button>
+  </div>
+  <div class="card logs-card">
+    <div id="outLogList"><p class="loading logs-loading">Loading…</p></div>
+    <div class="logs-pagination logs-pagination-wrap" id="outPagination"></div>
+  </div>
+</div>
+
+<script type="module" src="/js/logs.js"></script>

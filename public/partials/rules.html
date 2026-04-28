@@ -1,0 +1,197 @@
+<div class="page-header">
+  <div>
+    <h1>Rules</h1>
+    <p>Organise rules into groups. Each group has its own match mode and active toggle.</p>
+  </div>
+  <div class="page-header-actions">
+    <button type="button" class="help-btn" onclick="openHelp('Rules', window._help.rules)" title="Help">?</button>
+  </div>
+</div>
+
+<div class="split-panel" id="rulesSplitPanel">
+
+  <!-- Left: group list -->
+  <div class="split-panel-list">
+    <div class="split-panel-list-header">
+      <h3>Groups</h3>
+      <span id="ruleGroupCount" class="badge badge-muted">0</span>
+    </div>
+    <div id="ruleGroupList">
+      <div class="empty-state">
+        <div class="empty-state-icon">📁</div>
+        <h3>No groups yet</h3>
+        <p>Create your first group</p>
+      </div>
+    </div>
+    <div class="split-panel-list-footer">
+      <button type="button" class="btn-primary btn-sm btn-full" onclick="Rules.newGroup()">+ New Group</button>
+    </div>
+  </div>
+
+  <!-- Right panel -->
+  <div class="split-panel-right">
+
+    <!-- Selected group detail (accordions) -->
+    <div id="ruleGroupDetail" class="rg-detail rg-hidden">
+
+      <!-- Settings accordion -->
+      <div class="rg-accordion" id="rgAccordionSettings">
+        <div class="rg-accordion-header" onclick="Rules.toggleAccordion('settings')">
+          <span class="rg-accordion-chevron" id="rgChevronSettings">▸</span>
+          <span class="rg-accordion-title" id="rgSettingsTitle">Group Settings</span>
+          <span id="rgSettingsBadges" class="rg-accordion-badges"></span>
+          <label class="toggle rg-header-toggle" onclick="event.stopPropagation()" title="Toggle group active">
+            <input type="checkbox" id="ruleGrpActiveToggle" title="Group active" onchange="Rules.toggleGroupActive(this)">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="rg-accordion-body rg-hidden" id="rgBodySettings">
+          <div class="rg-accordion-body-inner">
+            <div class="form-group">
+              <label>Group Name <span class="rule-required">*</span></label>
+              <input type="text" id="ruleGrpName" placeholder="e.g. Sonarr, Radarr, System Alerts">
+            </div>
+            <div class="form-group">
+              <label>Description <span class="form-hint tpl-hint-inline">(optional)</span></label>
+              <input type="text" id="ruleGrpDescription" placeholder="What this group is for">
+            </div>
+            <div class="form-row form-row-2">
+              <div class="form-group">
+                <label>Match Mode</label>
+                <select id="ruleGrpMatchMode" title="Match mode">
+                  <option value="all">All matching rules fire</option>
+                  <option value="first">First matching rule only</option>
+                </select>
+                <div class="form-hint">First match stops after the first rule in this group fires.</div>
+              </div>
+            </div>
+            <div class="btn-group rule-form-buttons">
+              <div class="rule-form-spacer"></div>
+              <button type="button" class="btn-danger btn-sm rg-hidden" id="ruleGrpDeleteBtn" onclick="Rules.deleteGroup()">Delete Group</button>
+              <button type="button" class="btn-primary btn-sm" onclick="Rules.saveGroup()">Save Group</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rules accordion -->
+      <div class="rg-accordion rg-accordion-open" id="rgAccordionRules">
+        <div class="rg-accordion-header" onclick="Rules.toggleAccordion('rules')">
+          <span class="rg-accordion-chevron" id="rgChevronRules">▾</span>
+          <span class="rg-accordion-title">Rules</span>
+          <span id="rgRulesBadge" class="rg-accordion-badges"></span>
+          <button type="button" class="btn-primary btn-sm rg-add-rule-btn" onclick="Rules.newRule(event)">+ New Rule</button>
+        </div>
+        <div class="rg-accordion-body" id="rgBodyRules">
+          <div class="rg-accordion-body-inner">
+
+            <!-- Draggable rule list -->
+            <div id="rgRuleList" class="rg-rule-list"></div>
+
+            <!-- Inline rule edit form -->
+            <div id="rgRuleForm" class="rg-rule-form rg-hidden">
+              <div class="rg-rule-form-header">
+                <span id="rgRuleFormTitle" class="rg-rule-form-title">New Rule</span>
+                <button type="button" class="rg-rule-form-close" onclick="Rules.closeRuleForm()" title="Close">✕</button>
+              </div>
+
+              <div class="form-row form-row-2">
+                <div class="form-group">
+                  <label>Rule Name <span class="rule-required">*</span></label>
+                  <input type="text" id="ruleName" placeholder="e.g. Sonarr downloads → Telegram">
+                </div>
+                <div class="form-group">
+                  <label>Source <span class="form-hint tpl-hint-inline">(optional)</span></label>
+                  <select id="ruleSourceId" title="Source" onchange="Rules.onRuleSourceChange()">
+                    <option value="">— Any source —</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row form-row-2">
+                <div class="form-group">
+                  <label>Event Type <span class="form-hint tpl-hint-inline">(optional)</span></label>
+                  <input type="text" id="ruleEventType" placeholder="e.g. Download  or  * for all">
+                  <div class="form-hint">Leave blank or use <code>*</code> to match any event</div>
+                </div>
+                <div class="form-group">
+                  <label>Providers <span class="rule-required">*</span></label>
+                  <div id="ruleProviderPicker" class="rule-provider-picker">
+                    <div id="ruleProviderChips" class="rule-provider-chips"></div>
+                    <select id="ruleProviderAdd" class="rule-provider-add-select" title="Add provider" onchange="Rules.addProvider(this)">
+                      <option value="">+ Add provider…</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Conditions builder -->
+              <div class="form-group">
+                <div class="rule-conditions-header">
+                  <label>Conditions <span class="form-hint tpl-hint-inline">(optional)</span></label>
+                  <div class="rule-conditions-mode rg-hidden" id="ruleConditionModeRow">
+                    <span class="form-hint">Match</span>
+                    <select id="ruleConditionMode" class="rule-condition-mode-select" title="Condition mode">
+                      <option value="and">ALL conditions (AND)</option>
+                      <option value="or">ANY condition (OR)</option>
+                    </select>
+                  </div>
+                </div>
+                <div id="ruleConditions" class="rule-conditions-list"></div>
+                <button type="button" class="btn-secondary btn-sm rule-add-condition" onclick="Rules.addCondition()">+ Add Condition</button>
+              </div>
+
+              <!-- Token hints panel -->
+              <div id="ruleTokenHintsPanel" class="rg-hidden">
+                <div class="card tpl-token-hints-card">
+                  <div class="tpl-hints-accordion-header" onclick="Rules.toggleRuleHints()">
+                    <span class="tpl-hints-chevron" id="ruleHintsChevron">▸</span>
+                    <h2 class="tpl-hints-title">Token hints for <span id="ruleTokenHintsSourceName"></span></h2>
+                  </div>
+                  <div id="ruleTokenHintsList" class="tpl-token-hints-list tpl-hidden"></div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Message Template <span class="form-hint tpl-hint-inline">(optional — raw payload sent if blank)</span></label>
+                <select id="ruleTemplateId" title="Message template">
+                  <option value="">— No template (raw payload) —</option>
+                </select>
+              </div>
+
+              <div id="dryRunPanel" class="rule-dry-run-result rg-hidden">
+                <div class="card tpl-preview-card">
+                  <h2>Dry Run Result</h2>
+                  <div id="dryRunContent"></div>
+                </div>
+              </div>
+
+              <div class="btn-group rule-form-buttons">
+                <button type="button" class="btn-secondary btn-sm" id="ruleDryRunBtn" onclick="Rules.dryRun()">🧪 Dry Run</button>
+                <div class="rule-form-spacer"></div>
+                <button type="button" class="btn-danger btn-sm rg-hidden" id="ruleDeleteBtn" onclick="Rules.deleteRule()">Delete</button>
+                <button type="button" class="btn-primary btn-sm rg-hidden" id="ruleDuplicateBtn" onclick="Rules.duplicateRule()">Duplicate</button>
+                <button type="button" class="btn-primary btn-sm" id="ruleSaveBtn" onclick="Rules.saveRule()">Save Rule</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Empty state: no group selected -->
+    <div id="ruleRightEmpty" class="split-panel-form rule-empty-form">
+      <div class="empty-state">
+        <div class="empty-state-icon">📁</div>
+        <h3>Select a group</h3>
+        <p>Or create a new one to get started</p>
+      </div>
+    </div>
+
+  </div><!-- /.split-panel-right -->
+
+</div>
+
+<script type="module" src="/js/rules.js"></script>
