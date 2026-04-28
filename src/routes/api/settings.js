@@ -7,11 +7,14 @@ const providersRepo = require('../../repositories/providers');
 
 const router = express.Router();
 
+const VALID_START_MODES = ['collapsed', 'expanded'];
+
 router.get('/', requireAuth, requireAdmin, async (_req, res) => {
     try {
         const s = await settingsRepo.get();
         res.json({
             retentionDays: s.retentionDays ?? 90,
+            templateGroupStartMode: s.templateGroupStartMode ?? 'collapsed',
             publicUrl: (process.env.PUBLIC_URL || '').replace(/\/$/, ''),
         });
     } catch (err) {
@@ -21,12 +24,16 @@ router.get('/', requireAuth, requireAdmin, async (_req, res) => {
 
 router.put('/', requireAuth, requireAdmin, async (req, res) => {
     try {
-        const { retentionDays } = req.body || {};
+        const { retentionDays, templateGroupStartMode } = req.body || {};
         const update = {};
         if (retentionDays !== undefined) {
             const d = parseInt(retentionDays);
             if (isNaN(d) || d < 1) return res.status(400).json({ error: 'retentionDays must be a positive integer' });
             update.retentionDays = d;
+        }
+        if (templateGroupStartMode !== undefined) {
+            if (!VALID_START_MODES.includes(templateGroupStartMode)) return res.status(400).json({ error: 'Invalid templateGroupStartMode' });
+            update.templateGroupStartMode = templateGroupStartMode;
         }
 
         await settingsRepo.upsert(update);

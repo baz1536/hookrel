@@ -4,8 +4,12 @@ export async function loadAboutInfo() {
     infoEl.innerHTML = '<p class="loading">Loading application information…</p>';
 
     try {
-        const res = await fetch('/api/about');
+        const [res, encRes] = await Promise.all([
+            fetch('/api/about'),
+            fetch('/api/settings/encryption-status'),
+        ]);
         const info = await res.json();
+        const enc  = encRes.ok ? await encRes.json() : null;
         const env = info.environment || {};
 
         let html = `
@@ -64,6 +68,18 @@ export async function loadAboutInfo() {
               <span class="about-v">${env.dbType === 'mongodb' ? 'MongoDB' : 'SQLite'}</span>
             </div>
           </div>
+          ${enc ? `
+          <div class="card about-tech-card">
+            <h2 class="about-tech-title">Security</h2>
+            <div class="about-kv">
+              <span class="about-k">Encryption key</span>
+              <span class="about-v"><span class="badge ${enc.keyConfigured ? 'badge-success' : 'badge-error'}">${enc.keyConfigured ? 'Configured' : 'Not set'}</span></span>
+            </div>
+            <div class="about-kv">
+              <span class="about-k">Sensitive fields</span>
+              <span class="about-v">${enc.encrypted} / ${enc.total} encrypted${enc.unencrypted > 0 ? ` <span class="badge badge-warning">${enc.unencrypted} unencrypted</span>` : ''}</span>
+            </div>
+          </div>` : ''}
         </div>`;
 
         const tiptapVersion = (info.devDependencies || {})['@tiptap/core'] || '';

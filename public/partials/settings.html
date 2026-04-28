@@ -25,9 +25,20 @@
   </div>
 
   <div class="card settings-card">
-    <h2 class="settings-card-title">Encryption Status</h2>
-    <p class="form-hint settings-card-hint">Sensitive provider credentials are stored encrypted at rest using AES-256-GCM.</p>
-    <div id="encryptionStatus"><p class="loading">Loading…</p></div>
+    <h2 class="settings-card-title">Message Templates</h2>
+    <p class="form-hint settings-card-hint">Controls how template groups appear when the page loads.</p>
+    <div class="form-row form-row-2">
+      <div class="form-group">
+        <label>Group Start Mode</label>
+        <select id="templateGroupStartMode" title="Template group start mode">
+          <option value="collapsed">Collapsed</option>
+          <option value="expanded">Expanded</option>
+        </select>
+      </div>
+      <div class="form-group settings-field-align">
+        <button type="button" class="btn-primary btn-sm" onclick="Settings.saveTemplateSettings()">Save</button>
+      </div>
+    </div>
   </div>
 
   <div class="card settings-card">

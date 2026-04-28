@@ -2,38 +2,19 @@ let users = [];
 let editingUserId = null;
 
 async function init() {
-    await Promise.all([loadSettings(), loadEncryptionStatus(), loadUsers()]);
+    await Promise.all([loadSettings(), loadUsers()]);
 }
 
 async function loadSettings() {
     try {
         const res = await fetch('/api/settings');
         if (!res.ok) return;
-        const { retentionDays } = await res.json();
+        const { retentionDays, templateGroupStartMode } = await res.json();
         const rd = document.getElementById('retentionDays');
         if (rd) rd.value = retentionDays ?? 90;
+        const tgsm = document.getElementById('templateGroupStartMode');
+        if (tgsm) tgsm.value = templateGroupStartMode ?? 'collapsed';
     } catch {}
-}
-
-async function loadEncryptionStatus() {
-    const el = document.getElementById('encryptionStatus');
-    if (!el) return;
-    try {
-        const res = await fetch('/api/settings/encryption-status');
-        if (!res.ok) throw new Error();
-        const { total, encrypted, unencrypted, keyConfigured } = await res.json();
-        el.innerHTML = `
-            <div class="settings-enc-row">
-                <span class="settings-enc-label">Encryption key</span>
-                <span class="badge ${keyConfigured ? 'badge-success' : 'badge-error'}">${keyConfigured ? 'Configured' : 'Not set'}</span>
-            </div>
-            <div class="settings-enc-row">
-                <span class="settings-enc-label">Sensitive fields</span>
-                <span class="settings-enc-value">${encrypted} / ${total} encrypted${unencrypted > 0 ? ` <span class="badge badge-warning">${unencrypted} unencrypted</span>` : ''}</span>
-            </div>`;
-    } catch {
-        el.innerHTML = '<p class="loading">Failed to load encryption status</p>';
-    }
 }
 
 async function saveRetention() {
@@ -48,6 +29,24 @@ async function saveRetention() {
         const d = await res.json();
         showResult('retentionResult', res.ok ? `Saved — logs older than ${days} days will be removed` : (d.error || 'Save failed'), res.ok);
     } catch { showResult('retentionResult', 'Request failed', false); }
+}
+
+async function saveTemplateSettings() {
+    const mode = document.getElementById('templateGroupStartMode')?.value;
+    try {
+        const res = await fetch('/api/settings', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ templateGroupStartMode: mode }),
+        });
+        const d = await res.json();
+        if (res.ok) {
+            window.showToast('Template settings saved');
+            window.Templates?.applyStartMode(mode);
+        } else {
+            showResult('templateSettingsResult', d.error || 'Save failed', false);
+        }
+    } catch { showResult('templateSettingsResult', 'Request failed', false); }
 }
 
 async function changePassword() {
@@ -206,6 +205,6 @@ function show(id) { document.getElementById(id)?.classList.remove('settings-hidd
 function hide(id) { document.getElementById(id)?.classList.add('settings-hidden'); }
 function esc(str) { return String(str ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
-window.Settings = { init, saveRetention, changePassword, newUser, editUser, cancelUser, saveUser, deleteUser };
+window.Settings = { init, saveRetention, saveTemplateSettings, changePassword, newUser, editUser, cancelUser, saveUser, deleteUser };
 
 init();

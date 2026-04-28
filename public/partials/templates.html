@@ -17,6 +17,9 @@
       <h3>Message Templates</h3>
       <span id="templateCount" class="badge badge-muted">0</span>
     </div>
+    <div class="tpl-list-filter">
+      <input type="text" id="tplFilterInput" placeholder="Filter templates..." autocomplete="off" oninput="Templates.filterList()">
+    </div>
     <div id="templateList">
       <div class="empty-state tpl-list-empty">
         <div class="empty-state-icon">📝</div>

@@ -119,7 +119,8 @@ function createTables() {
 
         CREATE TABLE IF NOT EXISTS settings (
             id           TEXT PRIMARY KEY,
-            retentionDays INTEGER NOT NULL DEFAULT 90
+            retentionDays INTEGER NOT NULL DEFAULT 90,
+            templateGroupStartMode TEXT NOT NULL DEFAULT 'collapsed'
         );
 
         CREATE INDEX IF NOT EXISTS idx_sources_slug        ON sources(slug);
@@ -134,6 +135,12 @@ function createTables() {
 }
 
 function migrate() {
+    // Add templateGroupStartMode to existing settings tables
+    const settingsCols = db.prepare(`PRAGMA table_info(settings)`).all().map(c => c.name);
+    if (!settingsCols.includes('templateGroupStartMode')) {
+        db.exec(`ALTER TABLE settings ADD COLUMN templateGroupStartMode TEXT NOT NULL DEFAULT 'collapsed'`);
+    }
+
     // Add providerIds column to existing DBs that only have providerId
     const cols = db.prepare(`PRAGMA table_info(rules)`).all().map(c => c.name);
     if (!cols.includes('providerIds')) {

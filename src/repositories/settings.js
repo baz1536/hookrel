@@ -2,11 +2,11 @@ const { getDB } = require('../services/db');
 const isMongo = () => (process.env.DB_TYPE || 'sqlite').toLowerCase() === 'mongodb';
 
 const SETTINGS_ID = 'global';
-const DEFAULTS = { retentionDays: 90 };
+const DEFAULTS = { retentionDays: 90, templateGroupStartMode: 'collapsed' };
 
 function fromRow(r) {
     if (!r) return null;
-    return { _id: r.id, retentionDays: r.retentionDays };
+    return { _id: r.id, retentionDays: r.retentionDays, templateGroupStartMode: r.templateGroupStartMode ?? 'collapsed' };
 }
 
 async function get() {
@@ -31,8 +31,8 @@ async function upsert(fields) {
         getDB().prepare(`UPDATE settings SET ${sets} WHERE id = ?`).run(...Object.values(fields), SETTINGS_ID);
     } else {
         const merged = { ...DEFAULTS, ...fields };
-        getDB().prepare(`INSERT INTO settings (id, retentionDays) VALUES (?, ?)`)
-            .run(SETTINGS_ID, merged.retentionDays);
+        getDB().prepare(`INSERT INTO settings (id, retentionDays, templateGroupStartMode) VALUES (?, ?, ?)`)
+            .run(SETTINGS_ID, merged.retentionDays, merged.templateGroupStartMode);
     }
 }
 

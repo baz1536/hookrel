@@ -6,6 +6,14 @@ let editingId = null;
 let tplEditor = null;
 let bodyMode = 'html'; // 'html' | 'source'
 let isDirty = false;
+let templateGroupStartMode = 'collapsed';
+const collapsedGroups = new Set();
+const knownGroups = new Set();
+
+const GROUP_COLOURS = [
+    '#c9a84c', '#5b8dd9', '#5baa7a', '#c95b8d', '#8d5bc9',
+    '#5bc9c9', '#c9705b', '#7ac95b', '#c9c95b', '#5b7ac9',
+];
 
 const alert   = (msg) => window.showAlert(msg);
 const confirm = (msg, title, ok) => window.showConfirm(msg, title, ok);
@@ -230,7 +238,15 @@ function updateToolbarState() {
 // ── Init ──────────────────────────────────────────────────────────────────────
 
 async function init() {
-    await Promise.all([loadSources(), loadTemplates()]);
+    try {
+        const res = await fetch('/api/settings');
+        if (res.ok) {
+            const s = await res.json();
+            templateGroupStartMode = s.templateGroupStartMode ?? 'collapsed';
+        }
+    } catch {}
+    await loadSources();
+    await loadTemplates();
     initEditorResize();
     document.getElementById('tplBodySource')?.addEventListener('input', () => { markDirty(); syncHtmlButtonState(); });
     ['tplName', 'tplSubject'].forEach(id =>
@@ -238,6 +254,10 @@ async function init() {
     );
     document.getElementById('tplSourceId')?.addEventListener('change', markDirty);
     document.getElementById('tplBodyPlain')?.addEventListener('input', markDirty);
+    document.getElementById('templateList')?.addEventListener('click', e => {
+        const header = e.target.closest('.tpl-group-header');
+        if (header?.dataset.group) toggleGroup(header.dataset.group);
+    });
 }
 
 async function loadSources() {
@@ -322,22 +342,91 @@ function renderList() {
         return;
     }
 
-    el.innerHTML = allTemplates.map(t => {
+    const filter = (document.getElementById('tplFilterInput')?.value || '').toLowerCase().trim();
+
+    const filtered = allTemplates.filter(t => {
+        if (!filter) return true;
+        const sourceName = allSources.find(s => s.id === t.sourceId)?.name || '';
+        return t.name.toLowerCase().includes(filter) || sourceName.toLowerCase().includes(filter);
+    });
+
+    if (filtered.length === 0) {
+        el.innerHTML = `<div class="empty-state tpl-list-empty"><p>No templates match your filter.</p></div>`;
+        return;
+    }
+
+    // Group by source
+    const groups = {};
+    filtered.forEach(t => {
         const sourceName = allSources.find(s => s.id === t.sourceId)?.name || 'Any source';
-        const active = editingId === t.id ? ' active' : '';
-        return `<div class="split-panel-item${active}" onclick="Templates.editTemplate('${t.id}')">
-            <div>
+        if (!groups[sourceName]) groups[sourceName] = [];
+        groups[sourceName].push(t);
+    });
+
+    const groupNames = Object.keys(groups);
+    const showGroups = groupNames.length > 1 || !filter;
+
+    // Assign stable colours by sorted group name
+    const sortedNames = [...groupNames].sort();
+
+    // Apply start mode for groups seen for the first time
+    groupNames.forEach(name => {
+        if (!knownGroups.has(name)) {
+            if (templateGroupStartMode === 'collapsed') collapsedGroups.add(name);
+            knownGroups.add(name);
+        }
+    });
+
+    el.innerHTML = groupNames.map((groupName) => {
+        const collapsed = collapsedGroups.has(groupName);
+        const items = groups[groupName].map(t => {
+            const active = editingId === t.id ? ' active' : '';
+            return `<div class="split-panel-item${active}" onclick="Templates.editTemplate('${t.id}')">
                 <div class="split-panel-item-name">${esc(t.name)}</div>
-                <div class="split-panel-item-meta">${esc(sourceName)}</div>
+            </div>`;
+        }).join('');
+
+        if (!showGroups) return items;
+
+        const colourIndex = sortedNames.indexOf(groupName) % GROUP_COLOURS.length;
+        const colour = GROUP_COLOURS[colourIndex];
+        const chevron = collapsed ? '▸' : '▾';
+
+        return `<div class="tpl-group">
+            <div class="tpl-group-header" style="color:${colour};border-left:3px solid ${colour}" data-group="${esc(groupName)}">
+                <span class="tpl-group-chevron">${chevron}</span>${esc(groupName)}
             </div>
+            <div class="tpl-group-items${collapsed ? ' tpl-hidden' : ''}">${items}</div>
         </div>`;
     }).join('');
+}
+
+function filterList() {
+    renderList();
+}
+
+function toggleGroup(groupName) {
+    if (collapsedGroups.has(groupName)) {
+        collapsedGroups.delete(groupName);
+    } else {
+        collapsedGroups.add(groupName);
+    }
+    renderList();
+}
+
+function applyStartMode(mode) {
+    templateGroupStartMode = mode;
+    collapsedGroups.clear();
+    knownGroups.clear();
+    renderList();
 }
 
 async function newTemplate() {
     if (!await guardDirty()) return;
     editingId = null;
     clearDirty();
+    const filterEl = document.getElementById('tplFilterInput');
+    if (filterEl) filterEl.value = '';
     showForm();
     clearFields();
     tplHide('templateFormEditingBanner');
@@ -618,7 +707,7 @@ function toggleHints() {
 
 function refreshSources() { loadSources(); }
 
-window.Templates = { init, newTemplate, editTemplate, saveTemplate, deleteTemplate, duplicateTemplate, previewTemplate, clearForm, setBodyMode, initEditorResize, toggleHints, refreshSources };
+window.Templates = { init, newTemplate, editTemplate, saveTemplate, deleteTemplate, duplicateTemplate, previewTemplate, clearForm, setBodyMode, initEditorResize, toggleHints, refreshSources, filterList, toggleGroup, applyStartMode };
 
 // Load TipTap bundle then init
 const script = document.createElement('script');
