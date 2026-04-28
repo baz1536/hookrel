@@ -210,7 +210,7 @@ services:
       - hookrel_logs:/app/logs
 
   mongodb:
-    image: mongo:7
+    image: mongo:8.2.7
     container_name: mongodb
     restart: unless-stopped
     environment:
