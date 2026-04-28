@@ -363,11 +363,11 @@ function renderList() {
         groups[sourceName].push(t);
     });
 
-    const groupNames = Object.keys(groups);
+    const groupNames = Object.keys(groups).sort();
     const showGroups = groupNames.length > 1 || !filter;
 
-    // Assign stable colours by sorted group name
-    const sortedNames = [...groupNames].sort();
+    // sortedNames === groupNames (already sorted) — kept for colour index lookup
+    const sortedNames = groupNames;
 
     // Apply start mode for groups seen for the first time
     groupNames.forEach(name => {
