@@ -1,6 +1,12 @@
 let refreshTimer = null;
 
 async function init() {
+    if (window.currentUser?.role !== 'admin') {
+        document.querySelectorAll('#dashStats .dash-stat-link').forEach(el => {
+            el.classList.remove('dash-stat-link');
+            el.removeAttribute('onclick');
+        });
+    }
     await load();
     scheduleRefresh();
 }

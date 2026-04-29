@@ -159,6 +159,7 @@ async function boot() {
         const res = await fetch('/api/auth/me');
         if (!res.ok) { window.location.replace('/login.html'); return; }
         currentUser = await res.json();
+        window.currentUser = currentUser;
     } catch {
         window.location.replace('/login.html');
         return;

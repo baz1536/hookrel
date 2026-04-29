@@ -9,7 +9,7 @@
 <!-- Row 1: System settings -->
 <div class="settings-row">
 
-  <div class="card settings-card">
+  <div class="card settings-card" id="retentionCard">
     <h2 class="settings-card-title">Log &amp; Data Retention</h2>
     <p class="form-hint settings-card-hint">Inbound/outbound log entries and system log files older than this will be deleted automatically each day.</p>
     <div class="form-row form-row-2">
@@ -24,7 +24,7 @@
     <div id="retentionResult" class="settings-result settings-hidden"></div>
   </div>
 
-  <div class="card settings-card">
+  <div class="card settings-card" id="templateSettingsCard">
     <h2 class="settings-card-title">Message Templates</h2>
     <p class="form-hint settings-card-hint">Controls how template groups appear when the page loads.</p>
     <div class="form-row form-row-2">
@@ -68,8 +68,8 @@
 
 </div>
 
-<!-- User Management -->
-<div class="card settings-users-card">
+<!-- User Management (admin only) -->
+<div class="card settings-users-card" id="userManagementCard">
   <div class="settings-users-header">
     <div>
       <h2 class="settings-card-title">User Management</h2>

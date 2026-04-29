@@ -8,7 +8,7 @@ const logsRepo = require('../../repositories/logs');
 
 const router = express.Router();
 
-router.get('/', requireAuth, requireAdmin, async (_req, res) => {
+router.get('/', requireAuth, async (_req, res) => {
     try {
         const now = new Date();
         const since24h = new Date(now - 24 * 60 * 60 * 1000);

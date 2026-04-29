@@ -9,7 +9,11 @@ async function init() {
 async function loadSettings() {
     try {
         const res = await fetch('/api/settings');
-        if (!res.ok) return;
+        if (!res.ok) {
+            document.getElementById('retentionCard')?.style.setProperty('display', 'none');
+            document.getElementById('templateSettingsCard')?.style.setProperty('display', 'none');
+            return;
+        }
         const { retentionDays, templateGroupStartMode } = await res.json();
         const rd = document.getElementById('retentionDays');
         if (rd) rd.value = retentionDays ?? 90;
@@ -80,7 +84,10 @@ async function changePassword() {
 async function loadUsers() {
     try {
         const res = await fetch('/api/auth/users');
-        if (!res.ok) return;
+        if (!res.ok) {
+            document.getElementById('userManagementCard')?.style.setProperty('display', 'none');
+            return;
+        }
         users = await res.json();
         renderUsers();
     } catch {}
