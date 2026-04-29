@@ -68,11 +68,28 @@ router.post('/logout', (req, res) => {
 });
 
 // GET /api/auth/me
-router.get('/me', (req, res) => {
+router.get('/me', async (req, res) => {
     const { AUTH_ENABLED } = require('../../middleware/auth');
-    if (!AUTH_ENABLED) return res.json({ username: 'admin', role: 'admin', openAccess: true });
+    if (!AUTH_ENABLED) return res.json({ username: 'admin', role: 'admin', theme: '', openAccess: true });
     if (!req.session?.user) return res.status(401).json({ error: 'Unauthorised' });
-    res.json({ username: req.session.user.username, role: req.session.user.role });
+    try {
+        const user = await findUserById(req.session.user.id);
+        res.json({ username: req.session.user.username, role: req.session.user.role, theme: user?.theme ?? '' });
+    } catch {
+        res.json({ username: req.session.user.username, role: req.session.user.role, theme: '' });
+    }
+});
+
+// PUT /api/auth/theme — set own theme (no admin required)
+router.put('/theme', requireAuth, async (req, res) => {
+    try {
+        const { theme } = req.body || {};
+        if (typeof theme !== 'string') return res.status(400).json({ error: 'Invalid theme' });
+        await updateUser(req.session.user.id, { theme });
+        res.json({ ok: true });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 });
 
 // ── User management (admin only) ──

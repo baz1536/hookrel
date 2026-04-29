@@ -26,6 +26,7 @@ function createTables() {
             username    TEXT UNIQUE NOT NULL,
             passwordHash TEXT NOT NULL,
             role        TEXT NOT NULL DEFAULT 'user',
+            theme       TEXT NOT NULL DEFAULT '',
             createdAt   TEXT NOT NULL,
             updatedAt   TEXT NOT NULL
         );
@@ -135,6 +136,12 @@ function createTables() {
 }
 
 function migrate() {
+    // Add theme column to existing users tables
+    const userCols = db.prepare(`PRAGMA table_info(users)`).all().map(c => c.name);
+    if (!userCols.includes('theme')) {
+        db.exec(`ALTER TABLE users ADD COLUMN theme TEXT NOT NULL DEFAULT ''`);
+    }
+
     // Add templateGroupStartMode to existing settings tables
     const settingsCols = db.prepare(`PRAGMA table_info(settings)`).all().map(c => c.name);
     if (!settingsCols.includes('templateGroupStartMode')) {

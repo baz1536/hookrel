@@ -110,6 +110,22 @@ router.get('/about', async (_req, res) => {
     }
 });
 
+router.get('/themes', (_req, res) => {
+    res.json([
+        { id: '',         name: 'Default (Purple)' },
+        { id: 'blue',     name: 'Blue' },
+        { id: 'teal',     name: 'Teal' },
+        { id: 'green',    name: 'Green' },
+        { id: 'orange',   name: 'Orange' },
+        { id: 'red',      name: 'Red' },
+        { id: 'rose',     name: 'Rose' },
+        { id: 'amber',    name: 'Amber' },
+        { id: 'slate',    name: 'Slate' },
+        { id: 'midnight', name: 'Midnight' },
+        { id: 'light',    name: 'Light' },
+    ]);
+});
+
 router.use('/dashboard', dashboardRoutes);
 router.use('/settings', settingsRoutes);
 router.use('/sources', sourcesRoutes);

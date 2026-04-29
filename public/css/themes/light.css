@@ -1,0 +1,34 @@
+:root {
+  --accent:          #4f46e5;
+  --accent-hover:    #4338ca;
+  --accent-dim:      rgba(79,70,229,0.08);
+  --accent-border:   rgba(79,70,229,0.3);
+  --accent-glow:     rgba(79,70,229,0.2);
+
+  --bg:              #f0f2f5;
+  --bg-secondary:    #e4e7ec;
+  --card-bg:         #ffffff;
+  --card-border:     #d1d5db;
+  --sidebar-bg:      #ffffff;
+  --sidebar-border:  #d1d5db;
+
+  --text-primary:    #111827;
+  --text-secondary:  rgba(17,24,39,0.6);
+  --text-muted:      rgba(17,24,39,0.38);
+
+  --input-bg:        #ffffff;
+  --input-border:    #9ca3af;
+  --input-focus:     #4f46e5;
+
+  --divider:         #e5e7eb;
+
+  --success:         #15803d;
+  --success-bg:      rgba(21,128,61,0.1);
+  --error:           #b91c1c;
+  --error-bg:        rgba(185,28,28,0.1);
+  --warning:         #b45309;
+  --warning-bg:      rgba(180,83,9,0.1);
+
+  --shadow:          0 4px 24px rgba(0,0,0,0.08);
+  --shadow-sm:       0 2px 8px rgba(0,0,0,0.05);
+}
