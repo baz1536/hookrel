@@ -10,6 +10,7 @@ function fromRow(r) {
         username: r.username,
         passwordHash: r.passwordHash,
         role: r.role,
+        theme: r.theme ?? '',
         createdAt: new Date(r.createdAt),
         updatedAt: new Date(r.updatedAt),
     };
@@ -32,7 +33,7 @@ async function listAll() {
             .sort({ createdAt: 1 })
             .toArray();
     }
-    return getDB().prepare('SELECT id, username, role, createdAt, updatedAt FROM users ORDER BY createdAt ASC')
+    return getDB().prepare('SELECT id, username, role, theme, createdAt, updatedAt FROM users ORDER BY createdAt ASC')
         .all().map(r => ({ ...fromRow({ ...r, passwordHash: '' }), passwordHash: undefined }));
 }
 

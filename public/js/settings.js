@@ -1,8 +1,9 @@
 let users = [];
 let editingUserId = null;
+let allThemes = [];
 
 async function init() {
-    await Promise.all([loadSettings(), loadUsers()]);
+    await Promise.all([loadSettings(), loadUsers(), loadThemes()]);
 }
 
 async function loadSettings() {
@@ -191,6 +192,77 @@ async function deleteUser() {
     } catch { showResult('userFormResult', 'Request failed', false); }
 }
 
+// ── Theme picker ─────────────────────────────────────────────────────────────
+
+async function loadThemes() {
+    try {
+        const [themesRes, meRes] = await Promise.all([
+            fetch('/api/themes'),
+            fetch('/api/auth/me'),
+        ]);
+        if (!themesRes.ok || !meRes.ok) return;
+        allThemes = await themesRes.json();
+        const me = await meRes.json();
+        renderThemePicker(me.theme || '');
+    } catch {}
+}
+
+function renderThemePicker(activeId) {
+    const el = document.getElementById('themePicker');
+    if (!el || !allThemes.length) return;
+
+    const SWATCH_COLOURS = {
+        '':        '#e879f9',
+        'blue':    '#60a5fa',
+        'teal':    '#2dd4bf',
+        'green':   '#4ade80',
+        'orange':  '#fb923c',
+        'red':     '#f87171',
+        'rose':    '#fb7185',
+        'amber':   '#fbbf24',
+        'slate':   '#94a3b8',
+        'midnight':'#818cf8',
+        'light':   '#6366f1',
+    };
+
+    el.innerHTML = allThemes.map(t => {
+        const colour = SWATCH_COLOURS[t.id] || '#888';
+        const active = t.id === activeId ? ' theme-swatch-active' : '';
+        return `<button type="button" class="theme-swatch${active}" data-theme-id="${esc(t.id)}" title="${esc(t.name)}" style="--swatch-colour:${colour}">
+            <span class="theme-swatch-dot"></span>
+            <span class="theme-swatch-label">${esc(t.name)}</span>
+        </button>`;
+    }).join('');
+
+    el.addEventListener('click', async (e) => {
+        const btn = e.target.closest('.theme-swatch');
+        if (!btn) return;
+        const themeId = btn.dataset.themeId;
+        await saveTheme(themeId);
+    });
+}
+
+async function saveTheme(themeId) {
+    try {
+        const res = await fetch('/api/auth/theme', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ theme: themeId }),
+        });
+        if (!res.ok) {
+            const d = await res.json();
+            showResult('themeResult', d.error || 'Save failed', false);
+            return;
+        }
+        // Update active swatch
+        document.querySelectorAll('.theme-swatch').forEach(b => {
+            b.classList.toggle('theme-swatch-active', b.dataset.themeId === themeId);
+        });
+        window.applyTheme?.(themeId);
+        window.showToast('Theme updated');
+    } catch { showResult('themeResult', 'Request failed', false); }
+}
+
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 function showResult(id, msg, ok) {
@@ -205,6 +277,6 @@ function show(id) { document.getElementById(id)?.classList.remove('settings-hidd
 function hide(id) { document.getElementById(id)?.classList.add('settings-hidden'); }
 function esc(str) { return String(str ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
-window.Settings = { init, saveRetention, saveTemplateSettings, changePassword, newUser, editUser, cancelUser, saveUser, deleteUser };
+window.Settings = { init, saveRetention, saveTemplateSettings, changePassword, newUser, editUser, cancelUser, saveUser, deleteUser, saveTheme };
 
 init();

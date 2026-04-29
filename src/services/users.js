@@ -29,6 +29,7 @@ async function updateUser(id, updates) {
     if (updates.password) fields.passwordHash = await bcrypt.hash(updates.password, SALT_ROUNDS);
     if (updates.role)     fields.role = updates.role;
     if (updates.username) fields.username = updates.username;
+    if (updates.theme !== undefined) fields.theme = updates.theme;
     return repo.update(id, fields);
 }
 

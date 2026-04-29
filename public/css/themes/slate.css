@@ -1,0 +1,24 @@
+:root {
+  --accent:          #94a3b8;
+  --accent-hover:    #64748b;
+  --accent-dim:      rgba(148,163,184,0.12);
+  --accent-border:   rgba(148,163,184,0.2);
+  --accent-glow:     rgba(148,163,184,0.3);
+
+  --bg:              #0f1117;
+  --bg-secondary:    #161b24;
+  --card-bg:         rgba(22,27,36,0.85);
+  --card-border:     rgba(148,163,184,0.1);
+  --sidebar-bg:      #131820;
+  --sidebar-border:  rgba(148,163,184,0.12);
+
+  --text-primary:    #e8edf5;
+  --text-secondary:  rgba(232,237,245,0.55);
+  --text-muted:      rgba(232,237,245,0.35);
+
+  --input-bg:        rgba(15,17,23,0.7);
+  --input-border:    rgba(148,163,184,0.2);
+  --input-focus:     #94a3b8;
+
+  --divider:         rgba(148,163,184,0.1);
+}

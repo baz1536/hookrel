@@ -1,6 +1,6 @@
 {
   "name": "hookrel",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "description": "Self-hosted webhook relay — receive webhooks, match rules, and dispatch notifications to email, Telegram, Pushover, and Microsoft 365.",
   "main": "src/server.js",
   "scripts": {

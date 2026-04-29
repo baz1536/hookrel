@@ -130,6 +130,16 @@ export function showToast(message, type = 'success', duration = 3000) {
     }, duration);
 }
 
+export function applyTheme(themeId) {
+    const link = document.getElementById('app-theme');
+    if (!link) return;
+    if (!themeId) {
+        link.removeAttribute('href');
+    } else {
+        link.href = `/css/themes/${themeId}.css`;
+    }
+}
+
 // Expose to inline onclick handlers and module scripts
 window.switchTab = switchTab;
 window.closeModal = closeModal;
@@ -139,6 +149,7 @@ window.showConfirm = showConfirm;
 window.logout = logout;
 window.openHelp = openHelp;
 window.closeHelp = closeHelp;
+window.applyTheme = applyTheme;
 
 // Boot — verify session then load
 let currentUser = null;
@@ -152,6 +163,8 @@ async function boot() {
         window.location.replace('/login.html');
         return;
     }
+
+    applyTheme(currentUser.theme || '');
 
     // Hide admin-only nav items for regular users
     if (currentUser.role !== 'admin') {
