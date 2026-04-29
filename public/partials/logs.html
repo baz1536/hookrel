@@ -18,11 +18,11 @@
   <div class="logs-filters">
     <div class="form-group">
       <label>Date</label>
-      <select id="sysDateSel" title="Select log date"></select>
+      <select id="sysDateSel" title="Select log date" onchange="Logs.loadSystem()"></select>
     </div>
     <div class="form-group">
       <label>Level</label>
-      <select id="sysLevelSel" title="Filter by log level">
+      <select id="sysLevelSel" title="Filter by log level" onchange="Logs.loadSystem()">
         <option value="">All</option>
         <option value="error">Error</option>
         <option value="warn">Warn</option>
@@ -47,7 +47,7 @@
   <div class="logs-filters">
     <div class="form-group">
       <label>Source</label>
-      <select id="inbSourceSel" title="Filter by source"><option value="">All sources</option></select>
+      <select id="inbSourceSel" title="Filter by source" onchange="Logs.loadInbound()"><option value="">All sources</option></select>
     </div>
     <div class="form-group">
       <label>Event Type</label>
@@ -55,7 +55,7 @@
     </div>
     <div class="form-group">
       <label>Status</label>
-      <select id="inbStatusSel" title="Filter by dispatch status">
+      <select id="inbStatusSel" title="Filter by dispatch status" onchange="Logs.loadInbound()">
         <option value="">All</option>
         <option value="dispatched">Dispatched</option>
         <option value="partial">Partial</option>
@@ -77,11 +77,11 @@
   <div class="logs-filters">
     <div class="form-group">
       <label>Provider</label>
-      <select id="outProviderSel" title="Filter by provider"><option value="">All providers</option></select>
+      <select id="outProviderSel" title="Filter by provider" onchange="Logs.loadOutbound()"><option value="">All providers</option></select>
     </div>
     <div class="form-group">
       <label>Status</label>
-      <select id="outStatusSel" title="Filter by status">
+      <select id="outStatusSel" title="Filter by status" onchange="Logs.loadOutbound()">
         <option value="">All</option>
         <option value="ok">OK</option>
         <option value="error">Error</option>
