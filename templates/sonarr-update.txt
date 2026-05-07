@@ -1,7 +1,0 @@
-↑ Application Updated — Sonarr {{newVersion | (new version)}}
-
-Updated from {{previousVersion | —}} to {{newVersion | —}}
-
-Message:    {{message | —}}
-
-— Sonarr via HookRel
