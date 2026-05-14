@@ -744,6 +744,102 @@ pre {
   color: var(--text-muted);
   margin-top: 24px;
 }
+.login-forgot {
+  text-align: center;
+  margin-top: 14px;
+}
+.login-forgot-btn {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color var(--transition);
+}
+.login-forgot-btn:hover { color: var(--accent); }
+.login-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 24px;
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+.login-modal-box {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 28px;
+  max-width: 480px;
+  width: 100%;
+  box-shadow: var(--shadow);
+}
+.login-modal-box h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+}
+.login-modal-box > p {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+}
+.login-modal-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.login-modal-step {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+.login-modal-num {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--accent-dim);
+  border: 1px solid var(--accent-border);
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
+}
+.login-modal-step strong { color: var(--text-primary); }
+.login-modal-list {
+  margin: 8px 0 0 4px;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.login-modal-list li { margin: 0; }
+.login-modal-box code {
+  background: var(--bg-secondary);
+  border: 1px solid var(--input-border);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: 11px;
+  color: var(--accent);
+  font-family: 'SF Mono', 'Fira Mono', monospace;
+}
+.login-modal-close { width: 100%; justify-content: center; }
 
 /* ── Mobile Overlay ── */
 .mobile-overlay {

@@ -43,7 +43,7 @@ router.get('/', requireAuth, requireAdmin, async (_req, res) => {
     try {
         res.json((await repo.findAll()).map(sanitise));
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        logger.error(err); res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -78,7 +78,7 @@ router.post('/', requireAuth, requireAdmin, async (req, res) => {
         logger.info(`Source created: ${name} (${slug})`);
         res.status(201).json(sanitise(created));
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        logger.error(err); res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -89,7 +89,7 @@ router.get('/:id', requireAuth, requireAdmin, async (req, res) => {
         if (!doc) return res.status(404).json({ error: 'Source not found' });
         res.json(sanitise(doc));
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        logger.error(err); res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -110,7 +110,7 @@ router.put('/:id', requireAuth, requireAdmin, async (req, res) => {
         if (!matched) return res.status(404).json({ error: 'Source not found' });
         res.json({ ok: true });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        logger.error(err); res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -125,7 +125,7 @@ router.delete('/:id', requireAuth, requireAdmin, async (req, res) => {
         logger.info(`Source deleted: ${req.params.id}`);
         res.json({ ok: true });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        logger.error(err); res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -138,7 +138,7 @@ router.post('/:id/rotate-token', requireAuth, requireAdmin, async (req, res) => 
         logger.info(`Token rotated for source: ${req.params.id}`);
         res.json({ token });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        logger.error(err); res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -157,7 +157,7 @@ router.post('/:id/parse-payload', requireAuth, requireAdmin, async (req, res) =>
         const eventType = getEventType(payload, doc.eventTypePaths || []);
         res.json({ eventType, tokens });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        logger.error(err); res.status(500).json({ error: 'Internal server error' });
     }
 });
 

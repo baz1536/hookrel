@@ -1,6 +1,15 @@
 const express = require('express');
+const { rateLimit } = require('express-rate-limit');
 const logger = require('../../utils/logger');
 const { requireAuth, requireAdmin } = require('../../middleware/auth');
+
+const loginLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 20,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: 'Too many attempts, please try again later' },
+});
 const {
     findUserByUsername, findUserById, listUsers,
     createUser, updateUser, deleteUser,
@@ -14,12 +23,12 @@ router.get('/setup-required', async (req, res) => {
     try {
         res.json({ required: await isFirstLaunch() });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        logger.error(err); res.status(500).json({ error: 'Internal server error' });
     }
 });
 
 // POST /api/auth/setup — create first admin (only works when no users exist)
-router.post('/setup', async (req, res) => {
+router.post('/setup', loginLimiter, async (req, res) => {
     try {
         if (!(await isFirstLaunch())) {
             return res.status(403).json({ error: 'Setup already complete' });
@@ -35,12 +44,12 @@ router.post('/setup', async (req, res) => {
         logger.info(`First admin account created: ${username}`);
         res.json({ ok: true });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        logger.error(err); res.status(500).json({ error: 'Internal server error' });
     }
 });
 
 // POST /api/auth/login
-router.post('/login', async (req, res) => {
+router.post('/login', loginLimiter, async (req, res) => {
     try {
         if (await isFirstLaunch()) {
             return res.status(403).json({ error: 'Setup required', setupRequired: true });
@@ -58,7 +67,7 @@ router.post('/login', async (req, res) => {
         logger.info(`User logged in: ${username} (${user.role})`);
         res.json({ ok: true, role: user.role });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        logger.error(err); res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -88,7 +97,7 @@ router.put('/theme', requireAuth, async (req, res) => {
         await updateUser(req.session.user.id, { theme });
         res.json({ ok: true });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        logger.error(err); res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -99,7 +108,7 @@ router.get('/users', requireAuth, requireAdmin, async (req, res) => {
     try {
         res.json(await listUsers());
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        logger.error(err); res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -123,7 +132,7 @@ router.post('/users', requireAuth, requireAdmin, async (req, res) => {
         logger.info(`User created: ${username} (${role}) by ${req.session.user.username}`);
         res.status(201).json({ ok: true, id });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        logger.error(err); res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -142,7 +151,7 @@ router.put('/users/:id', requireAuth, requireAdmin, async (req, res) => {
         await updateUser(req.params.id, { password, role, username });
         res.json({ ok: true });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        logger.error(err); res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -166,7 +175,7 @@ router.delete('/users/:id', requireAuth, requireAdmin, async (req, res) => {
         logger.info(`User deleted: ${req.params.id} by ${req.session.user.username}`);
         res.json({ ok: true });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        logger.error(err); res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -184,7 +193,7 @@ router.post('/change-password', requireAuth, async (req, res) => {
         await updateUser(req.session.user.id, { password: newPassword });
         res.json({ ok: true });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        logger.error(err); res.status(500).json({ error: 'Internal server error' });
     }
 });
 

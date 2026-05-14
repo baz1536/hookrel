@@ -1,4 +1,5 @@
 const express = require('express');
+const logger = require('../../utils/logger');
 const { requireAuth, requireAdmin } = require('../../middleware/auth');
 const { scheduleRetention } = require('../../services/retention');
 const { isEncrypted } = require('../../services/encryption');
@@ -18,7 +19,7 @@ router.get('/', requireAuth, requireAdmin, async (_req, res) => {
             publicUrl: (process.env.PUBLIC_URL || '').replace(/\/$/, ''),
         });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        logger.error(err); res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -40,7 +41,7 @@ router.put('/', requireAuth, requireAdmin, async (req, res) => {
         if (update.retentionDays) scheduleRetention(update.retentionDays);
         res.json({ ok: true });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        logger.error(err); res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -62,7 +63,7 @@ router.get('/encryption-status', requireAuth, requireAdmin, async (_req, res) =>
         });
         res.json({ total, encrypted, unencrypted: total - encrypted, keyConfigured: !!process.env.ENCRYPTION_KEY });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        logger.error(err); res.status(500).json({ error: 'Internal server error' });
     }
 });
 

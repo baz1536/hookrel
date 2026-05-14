@@ -1,4 +1,5 @@
 const express = require('express');
+const logger = require('../../utils/logger');
 const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
@@ -30,7 +31,7 @@ router.get('/system', requireAuth, requireAdmin, async (req, res) => {
         const slice = entries.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
         res.json({ entries: slice, total, page, pages, date });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        logger.error(err); res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -44,7 +45,7 @@ router.get('/system/dates', requireAuth, requireAdmin, (_req, res) => {
             .sort().reverse();
         res.json(files);
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        logger.error(err); res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -64,7 +65,7 @@ router.get('/inbound', requireAuth, requireAdmin, async (req, res) => {
             pages: Math.ceil(total / PAGE_SIZE),
         });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        logger.error(err); res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -87,7 +88,7 @@ router.get('/inbound/:id', requireAuth, requireAdmin, async (req, res) => {
             })),
         });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        logger.error(err); res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -112,7 +113,7 @@ router.get('/outbound', requireAuth, requireAdmin, async (req, res) => {
             pages: Math.ceil(total / PAGE_SIZE),
         });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        logger.error(err); res.status(500).json({ error: 'Internal server error' });
     }
 });
 

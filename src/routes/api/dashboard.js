@@ -1,5 +1,6 @@
 const express = require('express');
-const { requireAuth, requireAdmin } = require('../../middleware/auth');
+const logger = require('../../utils/logger');
+const { requireAuth } = require('../../middleware/auth');
 const sourcesRepo = require('../../repositories/sources');
 const providersRepo = require('../../repositories/providers');
 const templatesRepo = require('../../repositories/templates');
@@ -68,7 +69,7 @@ router.get('/', requireAuth, async (_req, res) => {
             })),
         });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        logger.error(err); res.status(500).json({ error: 'Internal server error' });
     }
 });
 

@@ -91,7 +91,7 @@ router.get('/', requireAuth, requireAdmin, async (_req, res) => {
     try {
         res.json((await repo.findAll()).map(maskProvider));
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        logger.error(err); res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -123,7 +123,7 @@ router.post('/', requireAuth, requireAdmin, async (req, res) => {
         logger.info(`Provider created: ${name} (${type})`);
         res.status(201).json(maskProvider(created));
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        logger.error(err); res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -134,7 +134,7 @@ router.get('/:id', requireAuth, requireAdmin, async (req, res) => {
         if (!doc) return res.status(404).json({ error: 'Provider not found' });
         res.json(maskProvider(doc));
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        logger.error(err); res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -163,7 +163,7 @@ router.put('/:id', requireAuth, requireAdmin, async (req, res) => {
         await repo.update(req.params.id, update, resolvedType);
         res.json({ ok: true });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        logger.error(err); res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -178,7 +178,7 @@ router.delete('/:id', requireAuth, requireAdmin, async (req, res) => {
         logger.info(`Provider deleted: ${req.params.id}`);
         res.json({ ok: true });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        logger.error(err); res.status(500).json({ error: 'Internal server error' });
     }
 });
 

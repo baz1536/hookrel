@@ -41,6 +41,38 @@
             Sign in
           </button>
         </form>
+        <div class="login-forgot">
+          <button type="button" class="login-forgot-btn" id="forgotBtn">Forgot password?</button>
+        </div>
+      </div>
+
+      <!-- Forgot password help modal -->
+      <div id="forgotModal" class="login-modal" style="display:none">
+        <div class="login-modal-box">
+          <h3>Reset Your Password</h3>
+          <p>HookRel does not have self-service password reset. To regain access:</p>
+          <div class="login-modal-section">
+            <div class="login-modal-step">
+              <span class="login-modal-num">1</span>
+              <div>
+                <strong>If you are a regular user</strong> — ask an admin to reset your password via <em>Settings → User Management</em>.
+              </div>
+            </div>
+            <div class="login-modal-step">
+              <span class="login-modal-num">2</span>
+              <div>
+                <strong>If you are the admin</strong> — you can bypass authentication temporarily to reset your password:
+                <ol class="login-modal-list">
+                  <li>In your Docker environment, set <code>AUTH_ENABLED=false</code></li>
+                  <li>Restart the container</li>
+                  <li>Log in, go to <em>Settings → User Management → Edit User</em>, and set a new password</li>
+                  <li>Set <code>AUTH_ENABLED=true</code> and restart the container again</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+          <button type="button" class="btn-primary login-modal-close" id="forgotClose">Got it</button>
+        </div>
       </div>
 
       <div class="login-footer">Copyright &copy; <span id="loginYear"></span> dBR Promotions. All rights reserved.</div>

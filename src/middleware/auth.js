@@ -1,4 +1,5 @@
 const session = require('express-session');
+const logger = require('../utils/logger');
 
 const AUTH_ENABLED = process.env.AUTH_ENABLED !== 'false';
 
@@ -21,10 +22,16 @@ function buildSessionStore() {
 }
 
 function setupSession(app) {
-    const secret = process.env.SESSION_SECRET || 'hookrel-dev-secret-change-in-production';
+    const secret = process.env.SESSION_SECRET;
+    if (!secret) {
+        if (process.env.NODE_ENV === 'production') {
+            throw new Error('SESSION_SECRET environment variable is required in production');
+        }
+        logger.warn('SESSION_SECRET not set — using insecure dev default. Set this in production.');
+    }
 
     app.use(session({
-        secret,
+        secret: secret || 'hookrel-dev-secret-change-in-production',
         resave: false,
         saveUninitialized: false,
         store: buildSessionStore(),
