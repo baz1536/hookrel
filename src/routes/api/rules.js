@@ -52,7 +52,7 @@ router.get('/in-use', requireAuth, requireAdmin, async (req, res) => {
         if (templateId) inUse = await templatesRepo.isUsedByRule(templateId);
         res.json({ inUse });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        logger.error(err); res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -61,7 +61,7 @@ router.get('/', requireAuth, requireAdmin, async (_req, res) => {
     try {
         res.json((await repo.findAll()).map(sanitise));
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        logger.error(err); res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -99,7 +99,7 @@ router.post('/', requireAuth, requireAdmin, async (req, res) => {
         logger.info(`Rule created: ${name}`);
         res.status(201).json(sanitise(created));
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        logger.error(err); res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -110,7 +110,7 @@ router.get('/:id', requireAuth, requireAdmin, async (req, res) => {
         if (!doc) return res.status(404).json({ error: 'Rule not found' });
         res.json(sanitise(doc));
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        logger.error(err); res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -139,7 +139,7 @@ router.put('/:id', requireAuth, requireAdmin, async (req, res) => {
         if (!matched) return res.status(404).json({ error: 'Rule not found' });
         res.json({ ok: true });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        logger.error(err); res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -151,7 +151,7 @@ router.delete('/:id', requireAuth, requireAdmin, async (req, res) => {
         logger.info(`Rule deleted: ${req.params.id}`);
         res.json({ ok: true });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        logger.error(err); res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -165,7 +165,7 @@ router.post('/reorder', requireAuth, requireAdmin, async (req, res) => {
         ));
         res.json({ ok: true });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        logger.error(err); res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -178,7 +178,7 @@ router.post('/:id/toggle', requireAuth, requireAdmin, async (req, res) => {
         await repo.update(req.params.id, { active, updatedAt: new Date() });
         res.json({ ok: true, active });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        logger.error(err); res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -207,7 +207,7 @@ router.post('/dry-run', requireAuth, requireAdmin, async (req, res) => {
 
         res.json({ matched: enriched.length, rules: enriched });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        logger.error(err); res.status(500).json({ error: 'Internal server error' });
     }
 });
 

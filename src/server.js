@@ -12,6 +12,7 @@ if (process.env.HTTPS_PROXY || process.env.HTTP_PROXY ||
     require('global-agent').bootstrap();
 }
 
+const helmet = require('helmet');
 const logger = require('./utils/logger');
 const { connect } = require('./services/db');
 const { setupSession, requireAuth } = require('./middleware/auth');
@@ -25,6 +26,7 @@ const app = express();
 const DEFAULT_PORT = 3551;
 
 app.set('trust proxy', 1);
+app.use(helmet({ contentSecurityPolicy: false }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

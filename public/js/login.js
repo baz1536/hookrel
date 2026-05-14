@@ -1,5 +1,13 @@
 document.getElementById('loginYear').textContent = new Date().getFullYear();
 
+const forgotBtn   = document.getElementById('forgotBtn');
+const forgotModal = document.getElementById('forgotModal');
+const forgotClose = document.getElementById('forgotClose');
+
+forgotBtn.addEventListener('click', () => { forgotModal.style.display = 'flex'; });
+forgotClose.addEventListener('click', () => { forgotModal.style.display = 'none'; });
+forgotModal.addEventListener('click', (e) => { if (e.target === forgotModal) forgotModal.style.display = 'none'; });
+
 // Check setup required or already authenticated
 async function checkState() {
     const setupRes = await fetch('/api/auth/setup-required');

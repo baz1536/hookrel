@@ -27,7 +27,7 @@ router.get('/', requireAuth, requireAdmin, async (_req, res) => {
     try {
         res.json((await repo.findAll()).map(sanitise));
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        logger.error(err); res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -53,7 +53,7 @@ router.post('/', requireAuth, requireAdmin, async (req, res) => {
         logger.info(`Template created: ${name}`);
         res.status(201).json(sanitise(created));
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        logger.error(err); res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -64,7 +64,7 @@ router.get('/:id', requireAuth, requireAdmin, async (req, res) => {
         if (!doc) return res.status(404).json({ error: 'Template not found' });
         res.json(sanitise(doc));
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        logger.error(err); res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -83,7 +83,7 @@ router.put('/:id', requireAuth, requireAdmin, async (req, res) => {
         if (!matched) return res.status(404).json({ error: 'Template not found' });
         res.json({ ok: true });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        logger.error(err); res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -98,7 +98,7 @@ router.delete('/:id', requireAuth, requireAdmin, async (req, res) => {
         logger.info(`Template deleted: ${req.params.id}`);
         res.json({ ok: true });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        logger.error(err); res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -122,7 +122,7 @@ router.post('/:id/duplicate', requireAuth, requireAdmin, async (req, res) => {
         logger.info(`Template duplicated: ${src.name}`);
         res.status(201).json(sanitise(created));
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        logger.error(err); res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -139,7 +139,7 @@ router.post('/:id/preview', requireAuth, requireAdmin, async (req, res) => {
         const tokens = [...new Set([...extractTokens(doc.subject), ...extractTokens(doc.bodyHtml), ...extractTokens(doc.bodyPlain)])];
         res.json({ subject, bodyHtml, bodyPlain, tokens });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        logger.error(err); res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -153,7 +153,7 @@ router.post('/preview', requireAuth, requireAdmin, async (req, res) => {
         const tokens = [...new Set([...extractTokens(subject || ''), ...extractTokens(bodyHtml || ''), ...extractTokens(bodyPlain || '')])];
         res.json({ subject: render(subject || '', p), bodyHtml: render(bodyHtml || '', p), bodyPlain: render(bodyPlain || '', p), tokens });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        logger.error(err); res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -174,7 +174,7 @@ router.get('/token-hints/:sourceId', requireAuth, requireAdmin, async (req, res)
             learned: isCustom,
         });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        logger.error(err); res.status(500).json({ error: 'Internal server error' });
     }
 });
 
