@@ -1219,7 +1219,8 @@ pre {
 .about-hero-wordmark { font-size: 42px; font-weight: 800; letter-spacing: -1px; line-height: 1; margin-bottom: 8px; }
 .about-hero-hook { color: #c9a84c; }
 .about-hero-rel { color: var(--accent); }
-.about-hero-slogan { font-size: 13px; color: var(--text-muted); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 16px; }
+.about-hero-slogan { font-size: 13px; color: var(--text-muted); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 10px; }
+.about-hero-version { margin-bottom: 16px; display: inline-block; }
 .about-hero-desc { max-width: 620px; margin: 0 auto; font-size: 14px; color: var(--text-secondary); line-height: 1.7; }
 .about-section { margin-bottom: 20px; }
 .about-section-title { font-size: 13px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 20px; }
@@ -1235,7 +1236,11 @@ pre {
 .about-concept h3 { font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; }
 .about-concept p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
 .about-concept code { font-size: 11px; background: var(--input-bg); border: 1px solid var(--divider); border-radius: 3px; padding: 1px 4px; color: var(--accent); }
+.about-dev-banner { display: flex; align-items: center; gap: 8px; background: var(--warning-bg); border: 1px solid var(--warning); border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 16px; font-size: 13px; font-weight: 600; color: var(--warning); }
 .about-tech-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 16px; }
+.about-tech-card-full { margin-bottom: 16px; }
+.about-kv-grid { columns: 2; column-gap: 40px; }
+.about-kv-grid .about-kv { break-inside: avoid; }
 .about-tech-card { padding: 18px 20px; }
 .about-tech-title { font-size: 11px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 14px; }
 .about-kv { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid var(--divider); font-size: 13px; }

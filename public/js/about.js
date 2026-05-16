@@ -4,22 +4,25 @@ export async function loadAboutInfo() {
     infoEl.innerHTML = '<p class="loading">Loading application information…</p>';
 
     try {
-        const [res, encRes] = await Promise.all([
-            fetch('/api/about'),
-            fetch('/api/settings/encryption-status'),
-        ]);
+        const res = await fetch('/api/about');
         const info = await res.json();
-        const enc  = encRes.ok ? await encRes.json() : null;
         const env = info.environment || {};
 
-        let html = `
-        <div class="about-tech-grid">
-          <div class="card about-tech-card">
-            <h2 class="about-tech-title">Application</h2>
-            <div class="about-kv">
-              <span class="about-k">Version</span>
-              <span class="about-v"><span class="badge badge-accent">v${info.version}</span></span>
-            </div>
+        // Inject version badge into hero
+        const heroVersion = document.getElementById('about-hero-version');
+        if (heroVersion) {
+            heroVersion.innerHTML = `<span class="badge badge-accent about-hero-version">v${info.version}</span>`;
+        }
+
+        let html = info.isDevelopment
+            ? `<div class="about-dev-banner">⚠ Development mode — extended information visible</div>`
+            : '';
+
+        if (info.isDevelopment) {
+            html += `
+        <div class="card about-tech-card about-tech-card-full">
+          <h2 class="about-tech-title">Application &amp; Environment</h2>
+          <div class="about-kv-grid">
             <div class="about-kv">
               <span class="about-k">Node.js</span>
               <span class="about-v">${info.nodeVersion || 'Unknown'}</span>
@@ -33,10 +36,6 @@ export async function loadAboutInfo() {
               <span class="about-k">Git branch</span>
               <span class="about-v"><code>${info.gitBranch}</code></span>
             </div>` : ''}
-          </div>
-
-          <div class="card about-tech-card">
-            <h2 class="about-tech-title">Environment</h2>
             <div class="about-kv">
               <span class="about-k">Hostname</span>
               <span class="about-v">${env.hostname || 'Unknown'}</span>
@@ -68,25 +67,13 @@ export async function loadAboutInfo() {
               <span class="about-v">${env.dbType === 'mongodb' ? 'MongoDB' : 'SQLite'}</span>
             </div>
           </div>
-          ${enc ? `
-          <div class="card about-tech-card">
-            <h2 class="about-tech-title">Security</h2>
-            <div class="about-kv">
-              <span class="about-k">Encryption key</span>
-              <span class="about-v"><span class="badge ${enc.keyConfigured ? 'badge-success' : 'badge-error'}">${enc.keyConfigured ? 'Configured' : 'Not set'}</span></span>
-            </div>
-            <div class="about-kv">
-              <span class="about-k">Sensitive fields</span>
-              <span class="about-v">${enc.encrypted} / ${enc.total} encrypted${enc.unencrypted > 0 ? ` <span class="badge badge-warning">${enc.unencrypted} unencrypted</span>` : ''}</span>
-            </div>
-          </div>` : ''}
         </div>`;
 
-        const tiptapVersion = (info.devDependencies || {})['@tiptap/core'] || '';
-        const tiptapVer = tiptapVersion.replace(/^\^/, '');
+            const tiptapVersion = (info.devDependencies || {})['@tiptap/core'] || '';
+            const tiptapVer = tiptapVersion.replace(/^\^/, '');
 
-        if (info.dependencies && Object.keys(info.dependencies).length) {
-            html += `
+            if (info.dependencies && Object.keys(info.dependencies).length) {
+                html += `
         <div class="card about-deps-card">
           <h2 class="about-tech-title">Dependencies</h2>
           <table class="about-deps-table">
@@ -99,6 +86,7 @@ export async function loadAboutInfo() {
             </tbody>
           </table>
         </div>`;
+            }
         }
 
         html += `
