@@ -14,9 +14,7 @@ export async function loadAboutInfo() {
             heroVersion.innerHTML = `<span class="badge badge-accent about-hero-version">v${info.version}</span>`;
         }
 
-        let html = info.isDevelopment
-            ? `<div class="about-dev-banner">⚠ Development mode — extended information visible</div>`
-            : '';
+        let html = '';
 
         if (info.isDevelopment) {
             html += `

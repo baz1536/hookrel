@@ -14,7 +14,10 @@ const tabPartials = {
 
 const loadedTabs = new Set();
 
+const STORAGE_KEY = 'hookrel_active_tab';
+
 export async function switchTab(tabName) {
+    localStorage.setItem(STORAGE_KEY, tabName);
     document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
     document.querySelectorAll('.sidebar-nav-item, .mobile-nav-item').forEach(el => el.classList.remove('active'));
 
@@ -177,7 +180,22 @@ async function boot() {
         document.querySelectorAll('[data-auth-only]').forEach(el => el.style.display = 'none');
     }
 
-    switchTab('dashboard');
+    // Dev banner
+    try {
+        const aboutRes = await fetch('/api/about');
+        const aboutData = await aboutRes.json();
+        if (aboutData.isDevelopment) {
+            document.getElementById('dev-banner').classList.add('show');
+            document.querySelector('.app-layout').classList.add('has-dev-banner');
+        }
+    } catch { /* non-critical */ }
+
+    // Restore last active tab, defaulting to dashboard
+    const adminTabs = new Set(['rules', 'sources', 'providers', 'templates', 'logs']);
+    const saved = localStorage.getItem(STORAGE_KEY);
+    const validTabs = Object.keys(tabPartials);
+    const canAccess = saved && validTabs.includes(saved) && (currentUser.role === 'admin' || !adminTabs.has(saved));
+    switchTab(canAccess ? saved : 'dashboard');
 }
 
 window.currentUser = currentUser;
