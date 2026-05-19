@@ -2,6 +2,8 @@
 
 **Webhooks in. Notifications out.**
 
+[![Docker Hub](https://img.shields.io/docker/pulls/baz1536/hookrel?logo=docker&logoColor=white)](https://hub.docker.com/r/baz1536/hookrel)
+
 HookRel is a self-hosted webhook relay. It receives webhook events from your applications, matches them against your rules, formats them using templates, and dispatches notifications to your chosen providers — all without writing a single line of code.
 
 ---
