@@ -22,6 +22,8 @@ const authRoutes = require('./routes/api/auth');
 const webhookRoutes = require('./routes/webhook');
 const routes = require('./routes/index');
 
+const pkg = JSON.parse(fs.readFileSync(path.join(__dirname, '../package.json'), 'utf-8'));
+
 const app = express();
 const DEFAULT_PORT = 3551;
 
@@ -38,7 +40,7 @@ app.use('/js/setup.js', express.static(path.join(__dirname, '../public/js/setup.
 app.get('/login.html', (req, res) => res.sendFile(path.join(__dirname, '../public/login.html')));
 app.get('/setup.html', (req, res) => res.sendFile(path.join(__dirname, '../public/setup.html')));
 app.get('/favicon.ico', (req, res) => res.redirect('/images/favicon.svg'));
-app.get('/health', (req, res) => res.json({ status: 'ok' }));
+app.get('/health', (req, res) => res.json({ status: 'ok', name: pkg.name, version: pkg.version }));
 
 async function startServer() {
     const port = process.env.PORT ? parseInt(process.env.PORT, 10) : DEFAULT_PORT;
