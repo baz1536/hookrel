@@ -67,10 +67,23 @@ function getSelectedProviderIds() {
     return [...document.querySelectorAll('#ruleProviderChips .rule-provider-chip')].map(c => c.dataset.id);
 }
 
+const EMAIL_TYPES = ['smtp', 'msgraph'];
+
+// The reply-to override only applies to email providers, so hide it unless at
+// least one selected provider is an email type.
+function updateReplyToVisibility() {
+    const group = document.getElementById('ruleReplyToGroup');
+    if (!group) return;
+    const hasEmail = getSelectedProviderIds()
+        .some(id => EMAIL_TYPES.includes(allProviders.find(p => p.id === id)?.type));
+    group.classList.toggle('rg-hidden', !hasEmail);
+}
+
 function renderProviderChips(ids) {
     const container = document.getElementById('ruleProviderChips');
     container.innerHTML = '';
     (ids || []).forEach(id => addProviderChip(id));
+    updateReplyToVisibility();
 }
 
 function addProviderChip(id) {
@@ -83,6 +96,7 @@ function addProviderChip(id) {
     chip.dataset.id = id;
     chip.innerHTML = `${esc(p.name)}<span class="rule-provider-chip-type"> (${esc(p.type)})</span><button type="button" class="rule-provider-chip-remove" onclick="Rules.removeProvider('${id}')" title="Remove">✕</button>`;
     container.appendChild(chip);
+    updateReplyToVisibility();
 }
 
 function addProvider(sel) {
@@ -93,6 +107,7 @@ function addProvider(sel) {
 
 function removeProvider(id) {
     document.querySelector(`#ruleProviderChips [data-id="${id}"]`)?.remove();
+    updateReplyToVisibility();
 }
 
 async function loadTemplates() {
@@ -315,6 +330,7 @@ function populateRuleForm(id) {
     document.getElementById('ruleEventType').value      = r.eventType === '*' ? '' : (r.eventType || '');
     renderProviderChips(r.providerIds || []);
     document.getElementById('ruleTemplateId').value     = r.templateId || '';
+    document.getElementById('ruleReplyTo').value        = r.replyTo || '';
     document.getElementById('ruleConditionMode').value  = r.conditionMode || 'and';
     renderConditions(r.conditions || []);
     document.getElementById('rgRuleFormTitle').textContent    = `Editing — ${r.name}`;
@@ -354,6 +370,7 @@ function clearRuleFields() {
     ['ruleName', 'ruleEventType'].forEach(id => document.getElementById(id).value = '');
     ['ruleSourceId', 'ruleTemplateId', 'ruleConditionMode'].forEach(id => document.getElementById(id).value = '');
     renderProviderChips([]);
+    document.getElementById('ruleReplyTo').value = '';
     document.getElementById('dryRunPanel').classList.add('rg-hidden');
     document.getElementById('ruleTokenHintsPanel').classList.add('rg-hidden');
     renderConditions([]);
@@ -450,6 +467,7 @@ async function saveRule() {
         conditionMode: document.getElementById('ruleConditionMode').value,
         providerIds,
         templateId:    document.getElementById('ruleTemplateId').value || null,
+        replyTo:       document.getElementById('ruleReplyTo').value.trim(),
         active:        editingRuleId ? (allRules.find(r => r.id === editingRuleId)?.active ?? true) : true,
     };
 
@@ -495,7 +513,7 @@ async function duplicateRule() {
         const res  = await fetch('/api/rules', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: `${r.name} (copy)`, groupId: r.groupId, sourceId: r.sourceId, eventType: r.eventType, conditions: r.conditions, conditionMode: r.conditionMode, providerIds: r.providerIds || [], templateId: r.templateId, active: r.active }),
+            body: JSON.stringify({ name: `${r.name} (copy)`, groupId: r.groupId, sourceId: r.sourceId, eventType: r.eventType, conditions: r.conditions, conditionMode: r.conditionMode, providerIds: r.providerIds || [], templateId: r.templateId, replyTo: r.replyTo || '', active: r.active }),
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Duplicate failed');

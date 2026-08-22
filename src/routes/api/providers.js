@@ -27,6 +27,7 @@ function maskProvider(doc) {
         type: doc.type,
         supportsHtml: !PLAIN_ONLY_TYPES.includes(doc.type),
         recipients: doc.recipients,
+        replyTo: doc.replyTo || '',
         cc: doc.cc,
         bcc: doc.bcc,
         createdAt: doc.createdAt,
@@ -98,7 +99,7 @@ router.get('/', requireAuth, requireAdmin, async (_req, res) => {
 // POST /api/providers
 router.post('/', requireAuth, requireAdmin, async (req, res) => {
     try {
-        const { name, type, recipients, cc, bcc } = req.body || {};
+        const { name, type, recipients, replyTo, cc, bcc } = req.body || {};
         if (!name) return res.status(400).json({ error: 'Name is required' });
         const VALID_TYPES = ['smtp', 'msgraph', 'telegram', 'pushover', 'discord', 'slack', 'gotify', 'ntfy', 'teams'];
         if (!VALID_TYPES.includes(type)) {
@@ -112,6 +113,7 @@ router.post('/', requireAuth, requireAdmin, async (req, res) => {
         const doc = {
             name, type,
             recipients: recipients || '',
+            replyTo: typeof replyTo === 'string' ? replyTo.trim() : '',
             cc: cc || '',
             bcc: bcc || '',
             [type]: encrypted,
@@ -144,7 +146,7 @@ router.put('/:id', requireAuth, requireAdmin, async (req, res) => {
         const existing = await repo.findById(req.params.id);
         if (!existing) return res.status(404).json({ error: 'Provider not found' });
 
-        const { name, type, recipients, cc, bcc } = req.body || {};
+        const { name, type, recipients, replyTo, cc, bcc } = req.body || {};
         const resolvedType = type || existing.type;
 
         if (type && type !== existing.type) {
@@ -157,6 +159,7 @@ router.put('/:id', requireAuth, requireAdmin, async (req, res) => {
         const update = { updatedAt: new Date(), [resolvedType]: encrypted };
         if (name) update.name = name;
         if (recipients !== undefined) update.recipients = recipients;
+        if (replyTo !== undefined) update.replyTo = typeof replyTo === 'string' ? replyTo.trim() : '';
         if (cc !== undefined) update.cc = cc;
         if (bcc !== undefined) update.bcc = bcc;
 

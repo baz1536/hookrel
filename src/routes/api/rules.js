@@ -36,6 +36,7 @@ function sanitise(doc) {
         conditionMode: doc.conditionMode || 'and',
         providerIds: providerIds.map(String),
         templateId: doc.templateId ? doc.templateId.toString() : null,
+        replyTo: doc.replyTo || '',
         order: doc.order ?? 0,
         createdAt: doc.createdAt,
         updatedAt: doc.updatedAt,
@@ -68,7 +69,7 @@ router.get('/', requireAuth, requireAdmin, async (_req, res) => {
 // POST /api/rules
 router.post('/', requireAuth, requireAdmin, async (req, res) => {
     try {
-        const { name, groupId, sourceId, eventType, conditions, conditionMode, providerIds, templateId, active } = req.body || {};
+        const { name, groupId, sourceId, eventType, conditions, conditionMode, providerIds, templateId, replyTo, active } = req.body || {};
         if (!name) return res.status(400).json({ error: 'Name is required' });
         if (!groupId) return res.status(400).json({ error: 'Group is required' });
         if (!Array.isArray(providerIds) || providerIds.length === 0) return res.status(400).json({ error: 'At least one provider is required' });
@@ -90,6 +91,7 @@ router.post('/', requireAuth, requireAdmin, async (req, res) => {
             conditionMode: conditionMode === 'or' ? 'or' : 'and',
             providerIds,
             templateId: templateId || null,
+            replyTo: typeof replyTo === 'string' ? replyTo.trim() : '',
             order: (await repo.findMaxOrderInGroup(groupId)) + 1,
             createdAt: now,
             updatedAt: now,
@@ -117,7 +119,7 @@ router.get('/:id', requireAuth, requireAdmin, async (req, res) => {
 // PUT /api/rules/:id
 router.put('/:id', requireAuth, requireAdmin, async (req, res) => {
     try {
-        const { name, groupId, sourceId, eventType, conditions, conditionMode, providerIds, templateId, active } = req.body || {};
+        const { name, groupId, sourceId, eventType, conditions, conditionMode, providerIds, templateId, replyTo, active } = req.body || {};
         const update = { updatedAt: new Date() };
         if (name !== undefined) update.name = name;
         if (active !== undefined) update.active = active;
@@ -132,6 +134,7 @@ router.put('/:id', requireAuth, requireAdmin, async (req, res) => {
             update.providerIds = providerIds;
         }
         if (templateId !== undefined) update.templateId = templateId || null;
+        if (replyTo !== undefined) update.replyTo = typeof replyTo === 'string' ? replyTo.trim() : '';
         if (conditions !== undefined) update.conditions = sanitiseConditions(conditions);
         if (conditionMode !== undefined) update.conditionMode = conditionMode === 'or' ? 'or' : 'and';
 

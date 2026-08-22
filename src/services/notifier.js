@@ -1,5 +1,6 @@
 const { decrypt } = require('./encryption');
 const { render } = require('./templateEngine');
+const { resolveReplyTo } = require('./replyTo');
 const { PLAIN_ONLY_TYPES } = require('../constants/providerTypes');
 const { sendSmtp, sendMsgraph } = require('./providers/email');
 const { sendTelegram } = require('./providers/telegram');
@@ -62,7 +63,7 @@ async function dispatchRule(inboundId, rule, payload) {
         let error = null;
 
         try {
-            await sendToProvider(provider, subject, body);
+            await sendToProvider(provider, subject, body, { replyTo: rule.replyTo, payload: enrichedPayload });
         } catch (err) {
             status = 'error';
             error = err.message;
@@ -87,12 +88,21 @@ async function dispatchRule(inboundId, rule, payload) {
     if (failed.length === ids.length) throw new Error(failed[0].reason?.message || 'All providers failed');
 }
 
-async function sendToProvider(provider, subject, body) {
+async function sendToProvider(provider, subject, body, opts = {}) {
     const type = provider.type;
     const config = decryptProvider(provider);
 
-    if (type === 'smtp')     return sendSmtp(config, subject, body);
-    if (type === 'msgraph')  return sendMsgraph(config, subject, body);
+    if (type === 'smtp' || type === 'msgraph') {
+        // Rule-level override wins over the provider default; either may be a
+        // template referencing the payload. A template that resolves to nothing
+        // usable falls through to the next level rather than sending nothing.
+        const replyTo = resolveReplyTo(opts.replyTo, opts.payload)
+            ?? resolveReplyTo(provider.replyTo, opts.payload);
+        const emailOpts = { replyTo };
+        if (type === 'smtp') return sendSmtp(config, subject, body, true, emailOpts);
+        return sendMsgraph(config, subject, body, true, emailOpts);
+    }
+
     if (type === 'telegram') return sendTelegram(config, body);
     if (type === 'pushover') return sendPushover(config, subject, body);
     if (type === 'discord')  return sendDiscord(config, body);

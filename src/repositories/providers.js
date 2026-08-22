@@ -11,6 +11,7 @@ function fromRow(r) {
         name: r.name,
         type: r.type,
         recipients: r.recipients || '',
+        replyTo: r.replyTo || '',
         cc: r.cc || '',
         bcc: r.bcc || '',
         [r.type]: config,
@@ -39,12 +40,12 @@ async function create(doc) {
         return { ...doc, _id: result.insertedId };
     }
     const id = nanoid();
-    const { name, type, recipients, cc, bcc, createdAt, updatedAt } = doc;
+    const { name, type, recipients, replyTo, cc, bcc, createdAt, updatedAt } = doc;
     const config = doc[type] || {};
     getDB().prepare(`
-        INSERT INTO providers (id, name, type, recipients, cc, bcc, config, createdAt, updatedAt)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `).run(id, name, type, recipients || '', cc || '', bcc || '',
+        INSERT INTO providers (id, name, type, recipients, replyTo, cc, bcc, config, createdAt, updatedAt)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).run(id, name, type, recipients || '', replyTo || '', cc || '', bcc || '',
         JSON.stringify(config), createdAt.toISOString(), updatedAt.toISOString());
     return { ...doc, _id: id };
 }

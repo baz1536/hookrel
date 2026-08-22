@@ -48,6 +48,7 @@ function createTables() {
             name        TEXT NOT NULL,
             type        TEXT NOT NULL,
             recipients  TEXT NOT NULL DEFAULT '',
+            replyTo     TEXT NOT NULL DEFAULT '',
             cc          TEXT NOT NULL DEFAULT '',
             bcc         TEXT NOT NULL DEFAULT '',
             config      TEXT NOT NULL DEFAULT '{}',
@@ -89,6 +90,7 @@ function createTables() {
             providerId  TEXT,
             providerIds TEXT NOT NULL DEFAULT '[]',
             templateId  TEXT,
+            replyTo     TEXT,
             \`order\`   INTEGER NOT NULL DEFAULT 0,
             createdAt   TEXT NOT NULL,
             updatedAt   TEXT NOT NULL
@@ -159,6 +161,17 @@ function migrate() {
             stmt.run(JSON.stringify([row.providerId]), row.id);
         }
         logger.info(`Migrated ${rows.length} rules to providerIds array`);
+    }
+
+    // Add replyTo override column to existing rules tables
+    if (!db.prepare(`PRAGMA table_info(rules)`).all().map(c => c.name).includes('replyTo')) {
+        db.exec(`ALTER TABLE rules ADD COLUMN replyTo TEXT`);
+    }
+
+    // Add replyTo default column to existing providers tables
+    const providerCols = db.prepare(`PRAGMA table_info(providers)`).all().map(c => c.name);
+    if (!providerCols.includes('replyTo')) {
+        db.exec(`ALTER TABLE providers ADD COLUMN replyTo TEXT NOT NULL DEFAULT ''`);
     }
 }
 

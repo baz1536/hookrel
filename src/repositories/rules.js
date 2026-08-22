@@ -23,6 +23,7 @@ function fromRow(r) {
         conditionMode: r.conditionMode || 'and',
         providerIds,
         templateId: r.templateId || null,
+        replyTo: r.replyTo || '',
         order: r.order ?? 0,
         createdAt: new Date(r.createdAt),
         updatedAt: new Date(r.updatedAt),
@@ -90,8 +91,8 @@ async function create(doc) {
     }
     const id = nanoid();
     getDB().prepare(`
-        INSERT INTO rules (id, name, active, groupId, sourceId, eventType, conditions, conditionMode, providerIds, templateId, \`order\`, createdAt, updatedAt)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO rules (id, name, active, groupId, sourceId, eventType, conditions, conditionMode, providerIds, templateId, replyTo, \`order\`, createdAt, updatedAt)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).run(id, doc.name, doc.active !== false ? 1 : 0,
         doc.groupId || '',
         doc.sourceId ? doc.sourceId.toString() : null,
@@ -100,6 +101,7 @@ async function create(doc) {
         doc.conditionMode || 'and',
         JSON.stringify(doc.providerIds || []),
         doc.templateId ? doc.templateId.toString() : null,
+        doc.replyTo || null,
         doc.order ?? 0,
         doc.createdAt.toISOString(), doc.updatedAt.toISOString());
     return { ...doc, _id: id };

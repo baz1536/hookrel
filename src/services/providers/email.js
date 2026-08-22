@@ -4,7 +4,7 @@ const { Client } = require('@microsoft/microsoft-graph-client');
 const { TokenCredentialAuthenticationProvider } = require('@microsoft/microsoft-graph-client/authProviders/azureTokenCredentials');
 const { decrypt } = require('../encryption');
 
-async function sendSmtp(config, subject, body, isHtml = true) {
+async function sendSmtp(config, subject, body, isHtml = true, opts = {}) {
     const { smtp, recipients, cc, bcc } = config;
     if (!smtp) throw new Error('SMTP configuration missing');
 
@@ -29,12 +29,13 @@ async function sendSmtp(config, subject, body, isHtml = true) {
         to: recipients,
         cc: cc || undefined,
         bcc: bcc || undefined,
+        replyTo: opts.replyTo || undefined,
         subject,
         [isHtml ? 'html' : 'text']: body,
     });
 }
 
-async function sendMsgraph(config, subject, body, isHtml = true) {
+async function sendMsgraph(config, subject, body, isHtml = true, opts = {}) {
     const { msgraph, recipients, cc, bcc } = config;
     if (!msgraph) throw new Error('Microsoft Graph configuration missing');
 
@@ -54,12 +55,15 @@ async function sendMsgraph(config, subject, body, isHtml = true) {
     const ccRecipients = parseAddresses(cc);
     const bccRecipients = parseAddresses(bcc);
 
+    const replyToRecipients = parseAddresses(opts.replyTo);
+
     const message = {
         subject,
         body: { contentType: isHtml ? 'HTML' : 'Text', content: body },
         toRecipients,
         ...(ccRecipients.length && { ccRecipients }),
         ...(bccRecipients.length && { bccRecipients }),
+        ...(replyToRecipients.length && { replyTo: replyToRecipients }),
     };
 
     await client.api(`/users/${msgraph.from}/sendMail`).post({ message });

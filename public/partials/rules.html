@@ -159,6 +159,12 @@
                 </select>
               </div>
 
+              <div class="form-group rg-hidden" id="ruleReplyToGroup">
+                <label>Reply-To Override <span class="form-hint tpl-hint-inline">(optional — email providers only)</span></label>
+                <input type="text" id="ruleReplyTo" placeholder="{{user.email | noreply@example.com}}">
+                <div class="form-hint">Overrides the provider's default reply address. Supports payload tokens — always add a <code>| fallback</code> so a missing field doesn't drop the reply address.</div>
+              </div>
+
               <div id="dryRunPanel" class="rule-dry-run-result rg-hidden">
                 <div class="card tpl-preview-card">
                   <h2>Dry Run Result</h2>

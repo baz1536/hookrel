@@ -132,6 +132,7 @@ async function editProvider(id) {
         setVal('prvRecipients', p.recipients);
         setVal('prvCc', p.cc);
         setVal('prvBcc', p.bcc);
+        setVal('prvReplyTo', p.replyTo);
     }
 
     setText('providerFormEditingName', p.name);
@@ -190,6 +191,7 @@ function buildPayload() {
         payload.recipients = document.getElementById('prvRecipients')?.value.trim() || '';
         payload.cc  = document.getElementById('prvCc')?.value.trim() || '';
         payload.bcc = document.getElementById('prvBcc')?.value.trim() || '';
+        payload.replyTo = document.getElementById('prvReplyTo')?.value.trim() || '';
     }
 
     if (type === 'smtp') {
@@ -326,7 +328,7 @@ function clearForm() {
      'discordWebhookUrl', 'slackWebhookUrl', 'teamsWebhookUrl',
      'gotifyServerUrl','gotifyAppToken','gotifyPriority',
      'ntfyServerUrl','ntfyTopic','ntfyToken',
-     'prvRecipients','prvCc','prvBcc',
+     'prvRecipients','prvCc','prvBcc','prvReplyTo',
     ].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
     setVal('smtpSecurity', 'starttls');
     setVal('pushoverPriority', '0');
