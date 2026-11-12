@@ -26,6 +26,20 @@ jobs:
       - name: Generate SBOM
         run: cyclonedx-npm --output-format JSON --output-file sbom.json
 
+      - name: Add Node.js runtime to SBOM
+        run: |
+          NODE_VERSION=$(grep -m1 -oP '^ARG NODE_VERSION=\K[0-9]+\.[0-9]+\.[0-9]+' Dockerfile)
+          if [ -z "$NODE_VERSION" ]; then
+            echo "❌ No exact ARG NODE_VERSION=X.Y.Z in Dockerfile"
+            exit 1
+          fi
+          jq --arg v "$NODE_VERSION" '.components += [{
+            "type": "platform", "bom-ref": "runtime-node", "name": "node", "version": $v,
+            "purl": "pkg:generic/node@\($v)",
+            "cpe": "cpe:2.3:a:nodejs:node.js:\($v):*:*:*:*:*:*:*"
+          }]' sbom.json > sbom.json.tmp && mv sbom.json.tmp sbom.json
+          echo "✅ Added node@$NODE_VERSION to SBOM"
+
       - name: Archive SBOM as artefact
         uses: actions/upload-artifact@v4
         with:
