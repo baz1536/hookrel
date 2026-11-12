@@ -26,4 +26,3 @@ logs/
 eslint.config.mjs
 HOOKREL_BRIEF.md
 lint-first-run.md
-package-lock.json
