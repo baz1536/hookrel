@@ -2,6 +2,10 @@ const rulesRepo = require('../repositories/rules');
 const groupsRepo = require('../repositories/groups');
 
 function getTokenValue(tokens, path) {
+    // Inbound tokens are flat ('data.source'), so the dotted path is looked up as a key first;
+    // walking it as nested objects only finds top-level keys and left every data.* condition
+    // comparing against an empty value.
+    if (tokens && Object.prototype.hasOwnProperty.call(tokens, path)) return tokens[path];
     const parts = path.replace(/\[(\d+)\]/g, '.$1').split('.');
     let cur = tokens;
     for (const p of parts) {

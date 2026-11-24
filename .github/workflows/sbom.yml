@@ -18,7 +18,7 @@ jobs:
           node-version: '26'
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Install CycloneDX
         run: npm install -g @cyclonedx/cyclonedx-npm
